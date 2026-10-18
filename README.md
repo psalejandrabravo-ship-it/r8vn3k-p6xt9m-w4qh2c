@@ -14,9 +14,8 @@ Aplicación web jugable completa (primera versión funcional).
 - Robot: `images/103469.jpg`
 - Logotipos MIRARIM: `images/84070.png` (color), `84071.png`, `84072.png`
 
-**Personajes individuales (103269.jpg etc.) no estaban en los adjuntos.**  
-Se usan tarjetas provisionales de colores con descripciones.  
-Para reemplazar: coloca los archivos PNG/JPG transparentes o no en la carpeta `images/` y actualiza las rutas en `game.js` (CONFIG.agents).
+Personajes (fondo transparente): `images/103269.png` a `103275.png` y robot `images/103469.png`.  
+Logotipos: `84070.png` (wordmark color), `84071.png` (isotipo), `84072.png` (wordmark blanco).
 
 ## Cómo añadir el video de cierre
 
@@ -38,7 +37,7 @@ Mientras no haya video, muestra el panel crema de reserva.
 - Actividades de misiones están simplificadas con botones de demostración para completar el recorrido (P07–P30 navegables).
 - No hay arrastre real ni paneles de letras interactivos completos (se puede ampliar).
 - Narración usa síntesis de voz del navegador (calidad variable).
-- Personajes individuales son provisionales.
+- Los retratos de los agentes ya están en la selección.
 - Video es placeholder.
 - Estado se guarda en sessionStorage (se pierde al cerrar la pestaña).
 - No hay backend, cuentas ni envío de datos.
