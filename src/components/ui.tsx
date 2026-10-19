@@ -55,8 +55,8 @@ export function Companion({ pose = "idle" }: { pose?: "idle" | "walk" | "happy" 
         const name = detectiveName(session.persisted.names, session.persisted.selectedAgents, agent.id);
         return (
           <figure key={id} className={`companion pose-${pose}`}>
-            <img src={agent.image} alt="" style={{ animationDelay: `${index * 0.18}s` }} />
             <CarriedNumbers />
+            <img src={agent.image} alt="" style={{ animationDelay: `${index * 0.18}s` }} />
             <figcaption>{name}</figcaption>
           </figure>
         );

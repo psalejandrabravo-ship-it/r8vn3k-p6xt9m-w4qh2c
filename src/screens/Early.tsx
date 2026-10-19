@@ -89,6 +89,48 @@ export function IntroVideo() {
   );
 }
 
+function letterFor(missions: { 1: string; 2: string; 3: string }) {
+  const done = (id: 1 | 2 | 3) => missions[id] === "completed" || missions[id] === "skipped";
+  if (!done(1)) {
+    return {
+      label: "Carta de la primera misión",
+      lines: [
+        "Agente, dirígete a la primera misión.",
+        "Descubre allí la palabra secreta.",
+        "Esa pista te ayudará a descubrir el código secreto.",
+      ],
+    };
+  }
+  if (!done(2)) {
+    return {
+      label: "Carta de los números",
+      lines: [
+        "Agente, ya encontraste la palabra secreta.",
+        "Ahora reúne los números de cada misión.",
+        "Con esos números podrás abrir el maletín.",
+      ],
+    };
+  }
+  if (!done(3)) {
+    return {
+      label: "Carta de los números",
+      lines: [
+        "Agente, sigue reuniendo los números.",
+        "Visita la siguiente misión.",
+        "Cuando los tengas todos, podrás abrir el maletín.",
+      ],
+    };
+  }
+  return {
+    label: "Carta del maletín",
+    lines: [
+      "Agente, ya reuniste los números.",
+      "Llévalos hasta el maletín.",
+      "Con ellos podrás abrir el código secreto.",
+    ],
+  };
+}
+
 export function MapScreen() {
   const session = useSession();
   const { mode, participants, selectedAgents, names, missions, reducedMotion, activity } = session.persisted;
@@ -219,18 +261,16 @@ export function MapScreen() {
               onClick={() => setRecast(true)}
               aria-label={`Detective ${detectiveName(names, selectedAgents, person.id)}. Toca para cambiar.`}
             >
-              <img src={person.image} alt="" style={{ animationDelay: `${index * 0.18}s` }} />
               <CarriedNumbers />
+              <img src={person.image} alt="" style={{ animationDelay: `${index * 0.18}s` }} />
               <span>{detectiveName(names, selectedAgents, person.id)}</span>
             </button>
           );
         })}
       </div>
       {tutorial.opened && (
-        <div className="mission-letter" role="dialog" aria-label="Carta de la primera misión">
-          <p>Agente, dirígete a la primera misión.</p>
-          <p>Descubre allí la palabra secreta.</p>
-          <p>Esa pista te ayudará a descubrir el código secreto.</p>
+        <div className="mission-letter" role="dialog" aria-label={letterFor(missions).label}>
+          {letterFor(missions).lines.map((line) => <p key={line}>{line}</p>)}
           <button type="button" onClick={() => { session.closeTutorialLetter(); blip(session.persisted.sounds); }}>Cerrar el sobre</button>
         </div>
       )}

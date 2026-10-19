@@ -4,6 +4,7 @@ import { Companion, Hud, LetterBoard } from "../components/ui";
 import { blip } from "../lib/sound";
 import { placeTile } from "../state/logic";
 import { useSession } from "../state/sessionStore";
+import { useState } from "react";
 
 export function Mission1() {
   const session = useSession();
@@ -11,8 +12,13 @@ export function Mission1() {
   const { pool, slots, riddleSolved, doorOpen } = session.persisted.activity.m1;
   const done = session.persisted.missions[1] === "completed" || session.persisted.missions[1] === "skipped";
   const learned = riddleSolved || doorOpen || done;
+  const [showCalm, setShowCalm] = useState(false);
   const solved = () => {
     session.setFeedback("");
+    setShowCalm(true);
+    blip(session.persisted.sounds);
+  };
+  const continueAfterCalm = () => {
     session.solveRiddle();
     blip(session.persisted.sounds);
   };
@@ -30,6 +36,13 @@ export function Mission1() {
         <Companion pose={learned ? "happy" : "idle"} />
         {learned ? (
           <CalmLearn step={1} number={4} revealed={done} onContinue={leave} />
+        ) : showCalm ? (
+          <div className="dossier calm-note">
+            <img src="/assets/illustrations/cards/calma.jpg" alt="" />
+            <p className="riddle">La calma es sentirse más tranquilo por dentro.</p>
+            <p>Se siente al respirar y al descansar. Si llega el enojo o la frustración, se puede buscar otra vez.</p>
+            <button type="button" className="btn" onClick={continueAfterCalm}>Seguir</button>
+          </div>
         ) : (
           <div className="dossier">
             {explorers ? (
