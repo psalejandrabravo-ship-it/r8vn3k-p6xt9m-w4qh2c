@@ -56,10 +56,8 @@ export function Companion({ pose = "idle" }: { pose?: "idle" | "walk" | "happy" 
         return (
           <figure key={id} className={`companion pose-${pose}`}>
             <img src={agent.image} alt="" style={{ animationDelay: `${index * 0.18}s` }} />
-            <figcaption>
-              {name}
-              <CarriedNumbers />
-            </figcaption>
+            <CarriedNumbers />
+            <figcaption>{name}</figcaption>
           </figure>
         );
       })}

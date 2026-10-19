@@ -11,14 +11,7 @@ const CARDS = [
   { id: "contar", label: "Contar hasta 10", legend: "Contar despacio da un momento para elegir qué hacer.", image: "/assets/illustrations/cards/contar.jpg" },
 ];
 
-const NOTES = [
-  "Este número acompaña a tu detective. No hace falta memorizarlo.",
-  "Este número acompaña a tu detective. No hace falta memorizarlo.",
-  "Este número acompaña a tu detective. No hace falta memorizarlo.",
-];
-
 export function CalmLearn({
-  step,
   number,
   revealed,
   onContinue,
@@ -32,6 +25,7 @@ export function CalmLearn({
   const [open, setOpen] = useState<string[]>([]);
   const [focus, setFocus] = useState<string | null>(null);
   const card = CARDS.find((item) => item.id === focus);
+  const seenAll = open.length >= CARDS.length;
   const showNote = revealed || open.length > 0;
   useEffect(() => {
     session.setFeedback("");
@@ -74,11 +68,15 @@ export function CalmLearn({
         })}
       </div>
       {showNote && (
-        <button type="button" className="clue-note" onClick={onContinue}>
+        <button
+          type="button"
+          className={seenAll || revealed ? "clue-note ready" : "clue-note"}
+          onClick={onContinue}
+          aria-label={`Aprieta el ${number} para avanzar`}
+        >
           <strong>{number}</strong>
           <span>
-            <b>{NOTES[step - 1]}</b>
-            Seguir investigando
+            <b>{seenAll || revealed ? "Ya viste las formas. Aprieta el número para avanzar." : "Aprieta el número para avanzar."}</b>
           </span>
         </button>
       )}

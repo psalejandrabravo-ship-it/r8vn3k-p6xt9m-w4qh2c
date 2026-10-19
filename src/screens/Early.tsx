@@ -220,8 +220,8 @@ export function MapScreen() {
               aria-label={`Detective ${detectiveName(names, selectedAgents, person.id)}. Toca para cambiar.`}
             >
               <img src={person.image} alt="" style={{ animationDelay: `${index * 0.18}s` }} />
-              <span>{detectiveName(names, selectedAgents, person.id)}</span>
               <CarriedNumbers />
+              <span>{detectiveName(names, selectedAgents, person.id)}</span>
             </button>
           );
         })}

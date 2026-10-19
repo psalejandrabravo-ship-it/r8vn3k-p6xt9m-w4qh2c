@@ -6,10 +6,10 @@ import { solvedTiles } from "../state/logic";
 import { useSession } from "../state/sessionStore";
 
 const STEPS = [
-  ["Detenernos", "Paramos un momento, aunque el impulso empuje."],
-  ["Pensar", "Miramos qué pasa y qué opciones hay."],
-  ["Decidir", "Elegimos un paso que nos cuide."],
-  ["Actuar", "Hacemos ese paso, con paciencia."],
+  { title: "Detenernos", text: "Paramos un momento, aunque el impulso empuje.", image: "/assets/illustrations/steps/detener.jpg" },
+  { title: "Pensar", text: "Miramos qué pasa y qué opciones hay.", image: "/assets/illustrations/steps/pensar.jpg" },
+  { title: "Decidir", text: "Elegimos un paso que nos cuide.", image: "/assets/illustrations/steps/decidir.jpg" },
+  { title: "Actuar", text: "Hacemos ese paso, con paciencia.", image: "/assets/illustrations/steps/actuar.jpg" },
 ];
 
 function SituationVideo() {
@@ -45,18 +45,18 @@ function ThinkFirst({ onContinue }: { onContinue: () => void }) {
     <div className="learn-board">
       <p className="riddle">Pensar antes de actuar</p>
       <ol className="steps">
-        {STEPS.map(([title, text], index) => (
-          <li key={title}>
-            <b>{index + 1}. {title}</b>
-            <span>{text}</span>
+        {STEPS.map((step, index) => (
+          <li key={step.title}>
+            <img src={step.image} alt="" />
+            <b>{index + 1}. {step.title}</b>
+            <span>{step.text}</span>
           </li>
         ))}
       </ol>
-      <button type="button" className="clue-note" onClick={onContinue}>
+      <button type="button" className="clue-note ready" onClick={onContinue} aria-label="Aprieta el 7 para avanzar">
         <strong>7</strong>
         <span>
-          <b>Este número acompaña a tu detective. No hace falta memorizarlo.</b>
-          Seguir investigando
+          <b>Aprieta el número para avanzar.</b>
         </span>
       </button>
     </div>
