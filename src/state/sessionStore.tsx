@@ -72,7 +72,7 @@ export function freshPersisted(): Persisted {
     level: "exploradores",
     mode: "individual",
     participants: 2,
-    narration: true,
+    narration: false,
     sounds: true,
     reducedMotion: false,
     selectedAgents: [],
@@ -199,6 +199,7 @@ interface Store {
   setVideo: (src: string | null) => void;
   hintTutorial: () => void;
   openTutorialLetter: () => void;
+  closeTutorialLetter: () => void;
   revealTutorialLine: () => void;
   currentAgentId: () => number | null;
 }
@@ -568,6 +569,18 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       }),
       hintTutorial: () => update((prev) => ({ ...prev, activity: { ...prev.activity, tutorial: { ...prev.activity.tutorial, hinted: true } } })),
       openTutorialLetter: () => update((prev) => ({ ...prev, activity: { ...prev.activity, tutorial: { ...prev.activity.tutorial, opened: true, hinted: true } } })),
+      closeTutorialLetter: () => update((prev) => ({
+        ...prev,
+        activity: {
+          ...prev.activity,
+          tutorial: {
+            ...prev.activity.tutorial,
+            opened: false,
+            hinted: true,
+            line: Math.max(1, prev.activity.tutorial.line),
+          },
+        },
+      })),
       revealTutorialLine: () => update((prev) => ({
         ...prev,
         activity: { ...prev.activity, tutorial: { ...prev.activity.tutorial, line: Math.min(3, prev.activity.tutorial.line + 1) } },

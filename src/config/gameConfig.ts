@@ -93,8 +93,8 @@ export const REFLECTIONS = [
 export const LINES: Partial<Record<ScreenId, string>> = {
   P01: "El secreto del maletín. Tres pistas y un secreto por descubrir.",
   P05: "La misión comienza. Un maletín guarda un secreto y tres pistas lo abren.",
-  P06: "Este es el tablero. Elige a tu detective y sigue la primera pista.",
-  P07: "En la sala de las cartas hay una puerta cerrada.",
+  P06: "Mapa de misiones. El sobre cerrado espera que lo abras.",
+  P07: "Escucha el acertijo y descubre la palabra secreta.",
   P08: "Cuando algo cuesta, puedo parar, notar cómo estoy y pensar qué hacer.",
   P12: "En el puesto de escucha, la radio trae dos caminos: paciencia e impulso.",
   P18: "En el archivo hay cuatro momentos de Alma. Hay que ponerlos en orden.",

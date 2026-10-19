@@ -5,10 +5,10 @@ import { blip } from "../lib/sound";
 import { useSession } from "../state/sessionStore";
 import type { MissionId } from "../config/gameConfig";
 
-const PINS: { id: MissionId; title: string; x: string; y: string; ax: string; ay: string }[] = [
-  { id: 1, title: "Sala de las cartas", x: "20%", y: "34%", ax: "24%", ay: "58%" },
-  { id: 2, title: "Puesto de escucha", x: "80%", y: "32%", ax: "74%", ay: "56%" },
-  { id: 3, title: "Archivo de las huellas", x: "18%", y: "70%", ax: "26%", ay: "84%" },
+const PINS: { id: MissionId; title: string; label: string; x: string; y: string; ax: string; ay: string }[] = [
+  { id: 1, title: "Sala de las cartas", label: "Misión 01", x: "30%", y: "48%", ax: "38%", ay: "70%" },
+  { id: 2, title: "Puesto de escucha", label: "Misión 02", x: "68%", y: "44%", ax: "60%", ay: "68%" },
+  { id: 3, title: "Archivo de las huellas", label: "Misión 03", x: "28%", y: "76%", ax: "38%", ay: "84%" },
 ];
 
 export function CoverSetup() {
@@ -92,16 +92,28 @@ export function IntroVideo() {
 
 export function MapScreen() {
   const session = useSession();
-  const { mode, participants, selectedAgents, names, missions, cluesFound, reducedMotion } = session.persisted;
+  const { mode, participants, selectedAgents, names, missions, reducedMotion, activity } = session.persisted;
+  const tutorial = activity.tutorial ?? { hinted: false, opened: false, line: 0 };
   const needed = mode === "individual" ? 1 : participants;
   const chosen = selectedAgents.filter((id) => id > 0);
   const castReady = chosen.length >= needed;
   const [recast, setRecast] = useState(false);
-  const [spot, setSpot] = useState({ x: "50%", y: "68%" });
+  const [spot, setSpot] = useState({ x: "50%", y: "88%" });
   const [walking, setWalking] = useState(false);
   const agentId = session.currentAgentId();
   const agent = agentId ? agentById(agentId) : undefined;
-  const showCast = !castReady || recast;
+  const letterClosed = tutorial.line >= 1
+    || missions[1] !== "pending"
+    || missions[2] !== "pending"
+    || missions[3] !== "pending";
+  const visiblePins = PINS.filter((pin) => {
+    if (pin.id === 1) return letterClosed;
+    if (pin.id === 2) return missions[1] === "completed" || missions[1] === "skipped";
+    return missions[2] === "completed" || missions[2] === "skipped";
+  });
+  const showCase = missions[3] === "completed" || missions[3] === "skipped";
+  const nextPin = visiblePins.find((pin) => missions[pin.id] === "pending" || missions[pin.id] === "exploring");
+  const showCast = (!castReady || recast) && !tutorial.opened;
 
   const travel = (next: { x: string; y: string }, after: () => void) => {
     if (walking) return;
@@ -143,35 +155,59 @@ export function MapScreen() {
     <section className="world">
       <img className="cover-blur" src="/assets/map/tablero.jpg" alt="" />
       <div className="board">
-        <img src="/assets/map/tablero.jpg" alt="Tablero de corcho con un mapa del pueblo" />
-        <svg className="strings" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M50 78 C 36 60, 28 48, 20 36" />
-          <path d="M50 78 C 64 58, 72 46, 80 34" />
-          <path d="M50 78 C 34 82, 24 78, 18 70" />
-          <path d="M50 78 C 66 80, 74 74, 82 62" />
-        </svg>
-        {PINS.map((pin) => (
+        <img src="/assets/map/tablero.jpg" alt="Tablero de corcho" />
+        <h2 className="map-title">Mapa de misiones</h2>
+        {(visiblePins.length > 0 || showCase) && (
+          <svg className="strings" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            {visiblePins.map((pin) => {
+              const x = parseFloat(pin.x);
+              const y = parseFloat(pin.y);
+              return <path key={pin.id} d={`M78 24 Q ${(78 + x) / 2} ${(24 + y) / 2}, ${x} ${y}`} />;
+            })}
+            {showCase && <path d="M78 24 Q 76 50, 74 74" />}
+          </svg>
+        )}
+        <button
+          type="button"
+          className={`secret-mail${letterClosed ? " parked" : " invite"}${tutorial.opened ? " open" : ""}${reducedMotion ? " still" : ""}`}
+          style={letterClosed ? { left: "78%", top: "24%" } : { left: "50%", top: "52%" }}
+          aria-label="Abrir el sobre"
+          aria-hidden={tutorial.opened || undefined}
+          onClick={() => {
+            if (tutorial.opened) return;
+            session.openTutorialLetter();
+            blip(session.persisted.sounds);
+          }}
+        >
+          <span className="mail-body">
+            <span className="flap" />
+            <span className="seal" />
+          </span>
+        </button>
+        {visiblePins.map((pin) => (
           <button
             key={pin.id}
             type="button"
-            className={`pin status-${missions[pin.id]}`}
+            className={`pin pop status-${missions[pin.id]}${nextPin?.id === pin.id ? " is-next" : ""}`}
             style={{ left: pin.x, top: pin.y }}
             onClick={() => openMission(pin.id)}
           >
-            <b>{pin.id}</b>
+            <b>{pin.label}</b>
             <span>{pin.title}</span>
             <small>{missions[pin.id] === "completed" ? (pin.id === 1 ? "Carta 4" : pin.id === 2 ? "Radio 7" : "Huellas 2") : statusLabel(missions[pin.id])}</small>
           </button>
         ))}
-        <button
-          type="button"
-          className={Object.keys(cluesFound).length === 3 ? "pin case ready" : "pin case"}
-          style={{ left: "82%", top: "62%" }}
-          onClick={() => travel({ x: "74%", y: "78%" }, () => session.setScreen("P23"))}
-        >
-          <b>{Object.keys(cluesFound).length}/3</b>
-          <span>Maletín</span>
-        </button>
+        {showCase && (
+          <button
+            type="button"
+            className="pin case ready pop"
+            style={{ left: "74%", top: "74%" }}
+            onClick={() => travel({ x: "66%", y: "84%" }, () => session.setScreen("P23"))}
+          >
+            <b>3/3</b>
+            <span>Maletín</span>
+          </button>
+        )}
         {agent && !showCast && (
           <button
             type="button"
@@ -185,6 +221,14 @@ export function MapScreen() {
           </button>
         )}
       </div>
+      {tutorial.opened && (
+        <div className="mission-letter" role="dialog" aria-label="Carta de la primera misión">
+          <p>Agente, dirígete a la primera misión.</p>
+          <p>Descubre allí la palabra secreta.</p>
+          <p>Esa pista te ayudará a descubrir el código secreto.</p>
+          <button type="button" onClick={() => { session.closeTutorialLetter(); blip(session.persisted.sounds); }}>Cerrar el sobre</button>
+        </div>
+      )}
       {showCast && (
         <div className="picker">
           <div className="name-slip">

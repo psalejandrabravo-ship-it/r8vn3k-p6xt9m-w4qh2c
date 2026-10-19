@@ -96,7 +96,7 @@ export function LetterBoard({
   onRemove: (index: number) => void;
 }) {
   return (
-    <div className="board">
+    <div className="letter-board">
       <div className="slots" aria-label="Espacios de la palabra">
         {slots.map((slot, index) => (
           <button key={index} type="button" className={wide ? "letter wide" : "letter"} onClick={() => onRemove(index)}>
