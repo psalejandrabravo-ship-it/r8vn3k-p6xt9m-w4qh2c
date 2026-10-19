@@ -37,6 +37,15 @@ export function PrintsIcon({ className }: IconProps) {
   );
 }
 
+export function GearIcon() {
+  return (
+    <svg viewBox="0 0 48 48" aria-hidden="true">
+      <circle cx="24" cy="24" r="7" fill="none" stroke="currentColor" strokeWidth="2.5" />
+      <path d="M24 7 v5 M24 36 v5 M7 24 h5 M36 24 h5 M12 12 l3.5 3.5 M32.5 32.5 L36 36 M36 12 l-3.5 3.5 M15.5 32.5 L12 36" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function ExpandIcon() {
   return (
     <svg viewBox="0 0 48 48" aria-hidden="true">

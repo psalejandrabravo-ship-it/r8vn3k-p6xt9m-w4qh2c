@@ -23,8 +23,10 @@ Reflexiones, la herramienta elegida y las notas del adulto viven en memoria y no
 
 - Portada: `public/assets/illustrations/scenes/103261.jpg`
 - Agentes y robot: `public/assets/illustrations/characters/`
-- Los logotipos de `public/assets/brand/` no se muestran en el juego.
+- El logotipo de color se muestra en la portada y en la despedida.
 
-## Video de cierre
+## Video de la misión
+
+Cuando exista el archivo, escribe su ruta en `public/assets/video/intro.json`, por ejemplo `{ "src": "/assets/video/intro.mp4" }`. Al terminar, el juego pasa al mapa. Si todavía no hay video, se muestra una invitación breve y sigue solo.
 
 En la pantalla del cierre, la persona adulta puede elegir un video de este dispositivo. Si no hay archivo, queda el panel de reserva.

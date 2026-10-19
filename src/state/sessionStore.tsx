@@ -37,6 +37,7 @@ export interface Persisted {
   sounds: boolean;
   reducedMotion: boolean;
   selectedAgents: number[];
+  names: string[];
   currentTurn: number;
   missions: Record<MissionId, MissionStatus>;
   cluesFound: Partial<Record<ClueId, { number: number; source: ClueSource }>>;
@@ -52,7 +53,7 @@ export interface MemoryState {
   reflection: string | null;
 }
 
-export type DialogId = "pause" | "notebook" | "adult" | "guide" | "end" | "fichas" | "breath" | null;
+export type DialogId = "pause" | "notebook" | "adult" | "guide" | "end" | "fichas" | "breath" | "config" | null;
 
 function freshActivity(): ActivityState {
   return {
@@ -68,13 +69,14 @@ function freshActivity(): ActivityState {
 export function freshPersisted(): Persisted {
   return {
     screen: "P01",
-    level: "detectives",
+    level: "exploradores",
     mode: "individual",
     participants: 2,
     narration: true,
     sounds: true,
     reducedMotion: false,
     selectedAgents: [],
+    names: [],
     currentTurn: 0,
     missions: { 1: "pending", 2: "pending", 3: "pending" },
     cluesFound: {},
@@ -132,7 +134,8 @@ function loadPersisted(): Persisted | null {
     if (!raw) return null;
     const parsed: unknown = JSON.parse(raw);
     if (!isPersisted(parsed)) return null;
-    return parsed;
+    const names = Array.isArray(parsed.names) ? parsed.names : [];
+    return { ...parsed, names };
   } catch {
     return null;
   }
@@ -158,6 +161,8 @@ interface Store {
   toggleFlag: (key: "narration" | "sounds" | "reducedMotion") => void;
   setActiveSlot: (index: number) => void;
   assignAgent: (agentId: number) => void;
+  pickAgent: (agentId: number) => void;
+  setDetectiveName: (index: number, name: string) => void;
   clearSlot: (index: number) => void;
   confirmAgents: () => boolean;
   markExploring: (mission: MissionId) => void;
@@ -230,7 +235,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         if (status === "skipped" || status === "completed") {
           return { ...prev, cluesFound };
         }
-        const count = Math.max(prev.selectedAgents.length, 1);
+        const ids = prev.selectedAgents.filter((id) => id > 0);
+        const count = Math.max(ids.length, 1);
         return {
           ...prev,
           cluesFound,
@@ -261,7 +267,16 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         setActiveSlot(0);
         setSaveOn(true);
         setHasSavedSession(true);
-        setPersisted({ ...freshPersisted(), screen: "P02" });
+        setPersisted((prev) => ({
+          ...freshPersisted(),
+          screen: "P05",
+          level: prev.level,
+          mode: prev.mode,
+          participants: prev.participants,
+          narration: prev.narration,
+          sounds: prev.sounds,
+          reducedMotion: prev.reducedMotion,
+        }));
       },
       continueSaved: () => {
         const saved = loadPersisted();
@@ -281,28 +296,79 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         setFeedback("");
         setPersisted(freshPersisted());
       },
-      setLevel: (level) => update((prev) => ({ ...prev, level })),
+      setLevel: (level) => update((prev) => {
+        if (prev.level === level) return prev;
+        const keepBoard = prev.missions[2] === "completed" || prev.missions[2] === "skipped";
+        if (keepBoard) return { ...prev, level };
+        const board = level === "exploradores"
+          ? { pool: [{ id: "pac", char: "PACIENCIA" }, { id: "imp", char: "IMPULSO" }], slots: [null] as (Tile | null)[] }
+          : resetTiles(PACIENCIA);
+        return {
+          ...prev,
+          level,
+          activity: {
+            ...prev.activity,
+            m2: { ...prev.activity.m2, prepared: true, opened: false, ...board },
+          },
+        };
+      }),
       setMode: (mode) => update((prev) => ({
         ...prev,
         mode,
         participants: mode === "individual" ? 1 : Math.min(6, Math.max(2, prev.participants || 2)),
         selectedAgents: [],
+        names: [],
       })),
       setParticipants: (count) => update((prev) => ({
         ...prev,
         participants: Math.min(6, Math.max(2, count)),
         selectedAgents: [],
+        names: [],
       })),
       toggleFlag: (key) => update((prev) => ({ ...prev, [key]: !prev[key] })),
       setActiveSlot,
       assignAgent: (agentId) => update((prev) => {
         const needed = prev.mode === "individual" ? 1 : prev.participants;
         const slots = Array.from({ length: needed }, (_, i) => prev.selectedAgents[i] ?? 0);
+        const names = Array.from({ length: needed }, (_, i) => prev.names[i] ?? "");
         const other = slots.findIndex((id, index) => id === agentId && index !== activeSlot);
         const current = slots[activeSlot] ?? 0;
-        if (other >= 0) slots[other] = current;
+        if (other >= 0) {
+          slots[other] = current;
+          const swap = names[other] ?? "";
+          names[other] = names[activeSlot] ?? "";
+          names[activeSlot] = swap;
+        }
         slots[activeSlot] = agentId;
-        return { ...prev, selectedAgents: slots };
+        return { ...prev, selectedAgents: slots, names };
+      }),
+      pickAgent: (agentId) => {
+        const needed = persisted.mode === "individual" ? 1 : persisted.participants;
+        const current = Array.from({ length: needed }, (_, i) => persisted.selectedAgents[i] ?? 0);
+        const existing = current.findIndex((id) => id === agentId);
+        const removing = existing >= 0;
+        const empty = current.findIndex((id) => !id);
+        setActiveSlot(removing ? existing : empty >= 0 ? empty : 0);
+        update((prev) => {
+          const count = prev.mode === "individual" ? 1 : prev.participants;
+          const slots = Array.from({ length: count }, (_, i) => prev.selectedAgents[i] ?? 0);
+          const names = Array.from({ length: count }, (_, i) => prev.names[i] ?? "");
+          if (removing) {
+            const at = slots.findIndex((id) => id === agentId);
+            if (at >= 0) slots[at] = 0;
+            return { ...prev, selectedAgents: slots, names };
+          }
+          if (slots.includes(agentId)) return { ...prev, selectedAgents: slots, names };
+          const hole = slots.findIndex((id) => !id);
+          slots[hole >= 0 ? hole : 0] = agentId;
+          return { ...prev, selectedAgents: slots, names };
+        });
+      },
+      setDetectiveName: (index, name) => update((prev) => {
+        const needed = prev.mode === "individual" ? 1 : prev.participants;
+        const names = Array.from({ length: Math.max(needed, prev.names.length) }, (_, i) => prev.names[i] ?? "");
+        names[index] = name.slice(0, 24);
+        return { ...prev, names };
       }),
       clearSlot: (index) => update((prev) => {
         const slots = [...prev.selectedAgents];
@@ -327,7 +393,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       placeM1: (id) => update((prev) => {
         const moved = placeTile(prev.activity.m1.pool, prev.activity.m1.slots, id);
         if (!moved) return prev;
-        return { ...prev, activity: { ...prev.activity, m1: { ...prev.activity.m1, ...moved } } };
+        const word = moved.slots.map((slot) => slot?.char ?? "").join("");
+        return { ...prev, activity: { ...prev.activity, m1: { ...prev.activity.m1, ...moved, doorOpen: word === CALMA } } };
       }),
       returnM1: (index) => update((prev) => {
         const moved = removeTile(prev.activity.m1.pool, prev.activity.m1.slots, index);
@@ -376,7 +443,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       placeM2: (id) => update((prev) => {
         const moved = placeTile(prev.activity.m2.pool, prev.activity.m2.slots, id);
         if (!moved) return prev;
-        return { ...prev, activity: { ...prev.activity, m2: { ...prev.activity.m2, ...moved } } };
+        const target = prev.level === "exploradores" ? "PACIENCIA" : PACIENCIA;
+        const word = moved.slots.map((slot) => slot?.char ?? "").join("");
+        return { ...prev, activity: { ...prev.activity, m2: { ...prev.activity.m2, ...moved, opened: word === target } } };
       }),
       returnM2: (index) => update((prev) => {
         const moved = removeTile(prev.activity.m2.pool, prev.activity.m2.slots, index);
@@ -415,7 +484,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       placeM3: (id) => update((prev) => {
         const moved = placeScene(prev.activity.m3.pool, prev.activity.m3.slots, id);
         if (!moved) return prev;
-        return { ...prev, activity: { ...prev.activity, m3: { ...prev.activity.m3, ...moved, ordered: false } } };
+        const ordered = moved.slots.every((slot, index) => slot === SCENE_ORDER[index]);
+        return { ...prev, activity: { ...prev.activity, m3: { ...prev.activity.m3, ...moved, seen: true, ordered } } };
       }),
       returnM3: (index) => update((prev) => {
         const moved = removeScene(prev.activity.m3.pool, prev.activity.m3.slots, index);
@@ -502,7 +572,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         ...prev,
         activity: { ...prev.activity, tutorial: { ...prev.activity.tutorial, line: Math.min(3, prev.activity.tutorial.line + 1) } },
       })),
-      currentAgentId: () => persisted.selectedAgents[persisted.currentTurn] ?? persisted.selectedAgents[0] ?? null,
+      currentAgentId: () => {
+        const ids = persisted.selectedAgents.filter((id) => id > 0);
+        if (!ids.length) return null;
+        return ids[persisted.currentTurn % ids.length] ?? null;
+      },
     };
   }, [persisted, memory, dialog, feedback, saveOn, activeSlot, hasSavedSession]);
 

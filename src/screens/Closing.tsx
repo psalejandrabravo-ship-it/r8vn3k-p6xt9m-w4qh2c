@@ -58,10 +58,10 @@ function Farewell() {
   return (
     <section className="stack center">
       <img className="farewell-robot" src="/assets/illustrations/characters/103469.png" alt="" />
+      <img className="brand-logo end" src="/assets/brand/84070.png" alt="MIRARIM" />
       <h1>Gracias por explorar juntos</h1>
       <p className="lead">A veces algo cuesta. Podemos sentirlo, buscar apoyo y elegir qué hacer después.</p>
       <p className="lead">{TRANSVERSAL}</p>
-      <p className="credit">MIRARIM</p>
       <div className="row">
         <button type="button" className="btn" onClick={() => session.newVisit()}>Nueva sesión</button>
         <button type="button" className="btn secondary" onClick={() => session.setScreen("P30")}>Resumen del acompañante</button>
@@ -73,7 +73,12 @@ function Farewell() {
 export function Summary() {
   const session = useSession();
   const { level, mode, participants, missions, cluesFound, helpsUsed, selectedAgents } = session.persisted;
-  const names = selectedAgents.map((id) => agentById(id)?.short ?? "").filter(Boolean);
+  const names = selectedAgents
+    .map((id, index) => {
+      const custom = session.persisted.names[index]?.trim();
+      return custom || agentById(id)?.short || "";
+    })
+    .filter(Boolean);
   return (
     <section className="stack summary">
       <TopBar title="Resumen del acompañante" />

@@ -1,24 +1,49 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { CLUES, agentById, type ClueId } from "../config/gameConfig";
+import { CLUES, agentById, detectiveName, type ClueId } from "../config/gameConfig";
 import { hush } from "../lib/speech";
 import { useSession } from "../state/sessionStore";
 import { ClueIcon, ExpandIcon } from "./Icons";
 import type { Tile } from "../config/gameConfig";
 
 export function TopBar({ title, children }: { title: string; children?: ReactNode }) {
-  const session = useSession();
-  const agent = agentById(session.currentAgentId() ?? 0);
   return (
     <header className="topbar">
       <strong>{title}</strong>
-      {agent && <span className="turn">Turno de {agent.short}</span>}
-      <div className="row tight">
-        {children}
-        <button type="button" className="btn quiet" onClick={() => session.openDialog("notebook")}>Libreta</button>
-        <button type="button" className="btn quiet" onClick={() => session.openDialog("fichas")}>Fichas</button>
-        <button type="button" className="btn gold" onClick={() => session.openDialog("adult")}>Adulto</button>
+      <div className="row tight">{children}</div>
+    </header>
+  );
+}
+
+export function Hud({ title }: { title: string }) {
+  const session = useSession();
+  const agentId = session.currentAgentId();
+  const agent = agentId ? agentById(agentId) : undefined;
+  const name = agentId ? detectiveName(session.persisted.names, session.persisted.selectedAgents, agentId) : "";
+  return (
+    <header className="hud">
+      <button type="button" className="icon-btn back" aria-label="Volver al mapa" onClick={() => session.setScreen("P06")}>
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M30 12 L16 24 L30 36" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </button>
+      {agent && <img className="hud-avatar" src={agent.image} alt="" />}
+      <div>
+        <strong>{title}</strong>
+        {name && <small>{name}</small>}
       </div>
     </header>
+  );
+}
+
+export function Companion({ pose = "idle" }: { pose?: "idle" | "walk" | "happy" }) {
+  const session = useSession();
+  const agentId = session.currentAgentId();
+  const agent = agentId ? agentById(agentId) : undefined;
+  if (!agent) return null;
+  const name = detectiveName(session.persisted.names, session.persisted.selectedAgents, agent.id);
+  return (
+    <figure className={`companion pose-${pose}`}>
+      <img src={agent.image} alt="" />
+      <figcaption>{name}</figcaption>
+    </figure>
   );
 }
 

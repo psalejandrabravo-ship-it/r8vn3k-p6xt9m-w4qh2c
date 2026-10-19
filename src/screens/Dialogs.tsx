@@ -10,13 +10,14 @@ export function Dialogs() {
     <div className="dialog" role="dialog" aria-modal="true">
       <div className="dialog-card">
         {dialog === "guide" && <Guide onClose={() => session.openDialog(null)} />}
+        {dialog === "config" && <Config />}
         {dialog === "pause" && <Pause />}
         {dialog === "breath" && <Breath />}
         {dialog === "end" && <End />}
         {dialog === "notebook" && <Notebook />}
         {dialog === "fichas" && <Fichas />}
         {dialog === "adult" && <Adult />}
-        {dialog !== "guide" && dialog !== "pause" && dialog !== "breath" && dialog !== "end" && dialog !== "notebook" && dialog !== "fichas" && dialog !== "adult" && (
+        {dialog !== "guide" && dialog !== "config" && dialog !== "pause" && dialog !== "breath" && dialog !== "end" && dialog !== "notebook" && dialog !== "fichas" && dialog !== "adult" && (
           <Fallback dialog={dialog} />
         )}
       </div>
@@ -30,6 +31,68 @@ function Fallback({ dialog }: { dialog: DialogId }) {
     <>
       <p>{dialog}</p>
       <button type="button" className="btn" onClick={() => session.openDialog(null)}>Cerrar</button>
+    </>
+  );
+}
+
+function Config() {
+  const session = useSession();
+  const { level, mode, participants, narration, sounds, reducedMotion, screen } = session.persisted;
+  const inGame = screen !== "P01" && screen !== "P02";
+  const missions: { id: MissionId; name: string }[] = [
+    { id: 1, name: "Sala de las cartas" },
+    { id: 2, name: "Puesto de escucha" },
+    { id: 3, name: "Archivo de las huellas" },
+  ];
+  return (
+    <>
+      <h2>Configuración</h2>
+      <p>Si no cambias nada, el juego empieza individual, de 4 a 5 años.</p>
+      <div className="choice-row" role="group" aria-label="Nivel">
+        <button type="button" className={level === "exploradores" ? "choice on" : "choice"} onClick={() => session.setLevel("exploradores")}>Exploradores, 4 a 5 años</button>
+        <button type="button" className={level === "detectives" ? "choice on" : "choice"} onClick={() => session.setLevel("detectives")}>Detectives, 6 a 8 años</button>
+      </div>
+      <div className="choice-row" role="group" aria-label="Modo">
+        <button type="button" className={mode === "individual" ? "choice on" : "choice"} onClick={() => session.setMode("individual")}>Individual</button>
+        <button type="button" className={mode === "grupal" ? "choice on" : "choice"} onClick={() => session.setMode("grupal")}>Grupal</button>
+      </div>
+      {mode === "grupal" && (
+        <div className="stepper">
+          <button type="button" aria-label="Menos participantes" disabled={participants <= 2} onClick={() => session.setParticipants(participants - 1)}>−</button>
+          <span>{participants} detectives</span>
+          <button type="button" aria-label="Más participantes" disabled={participants >= 6} onClick={() => session.setParticipants(participants + 1)}>+</button>
+        </div>
+      )}
+      <label className="check"><input type="checkbox" checked={narration} onChange={() => session.toggleFlag("narration")} /> Narración</label>
+      <label className="check"><input type="checkbox" checked={sounds} onChange={() => session.toggleFlag("sounds")} /> Sonidos suaves</label>
+      <label className="check"><input type="checkbox" checked={reducedMotion} onChange={() => session.toggleFlag("reducedMotion")} /> Movimiento reducido</label>
+      <p>{TRANSVERSAL}</p>
+      {inGame && (
+        <details>
+          <summary>Acompañante</summary>
+          <p>Si una misión cuesta demasiado, el apoyo deja la pista y no la marca como completada.</p>
+          {missions.map((mission) => (
+            <button
+              key={mission.id}
+              type="button"
+              className="choice"
+              onClick={() => {
+                session.setFeedback(session.skipMission(mission.id));
+                session.openDialog(null);
+              }}
+            >
+              Apoyo en {mission.name}
+            </button>
+          ))}
+          <label className="notes">
+            Notas de esta visita
+            <textarea value={session.memory.sessionNotes} onChange={(event) => session.setNotes(event.target.value)} rows={3} />
+          </label>
+          <button type="button" className="choice" onClick={() => { session.openDialog(null); session.setScreen("P30"); }}>Resumen</button>
+          <button type="button" className="choice" onClick={() => { session.openDialog(null); session.setScreen("P29"); }}>Terminar por hoy</button>
+        </details>
+      )}
+      <button type="button" className="btn" onClick={() => session.openDialog(null)}>Listo</button>
     </>
   );
 }
