@@ -19,7 +19,7 @@ export function Briefcase() {
   };
   return (
     <section className="play">
-      <Hud title="El maletín" />
+      <Hud title="El maletín" onPrevious={() => session.setScreen("P18")} />
       <div className="play-layout">
         <Companion pose={ready ? "happy" : "idle"} />
         <div className="dossier">

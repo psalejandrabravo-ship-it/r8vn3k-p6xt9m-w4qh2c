@@ -96,12 +96,14 @@ export function MapScreen() {
   const tutorial = activity.tutorial ?? { hinted: false, opened: false, line: 0 };
   const needed = mode === "individual" ? 1 : participants;
   const chosen = selectedAgents.filter((id) => id > 0);
-  const castReady = chosen.length >= needed;
+  const named = chosen.length >= needed && chosen.every((id) => {
+    const index = selectedAgents.findIndex((agent) => agent === id);
+    return (names[index] ?? "").trim().length > 0;
+  });
+  const [sealed, setSealed] = useState(named);
   const [recast, setRecast] = useState(false);
-  const [spot, setSpot] = useState({ x: "50%", y: "88%" });
+  const [spot, setSpot] = useState({ x: "18%", y: "86%" });
   const [walking, setWalking] = useState(false);
-  const agentId = session.currentAgentId();
-  const agent = agentId ? agentById(agentId) : undefined;
   const letterClosed = tutorial.line >= 1
     || missions[1] !== "pending"
     || missions[2] !== "pending"
@@ -113,12 +115,15 @@ export function MapScreen() {
   });
   const showCase = missions[3] === "completed" || missions[3] === "skipped";
   const nextPin = visiblePins.find((pin) => missions[pin.id] === "pending" || missions[pin.id] === "exploring");
-  const showCast = (!castReady || recast) && !tutorial.opened;
+  const showCast = (!sealed || recast) && !tutorial.opened;
+  useEffect(() => {
+    if (!named) setSealed(false);
+  }, [named]);
 
   const travel = (next: { x: string; y: string }, after: () => void) => {
     if (walking) return;
-    if (!castReady) {
-      session.setFeedback("Primero elige a tu detective.");
+    if (!sealed || !named) {
+      session.setFeedback(chosen.length < needed ? "Primero elige a tu detective." : "Escribe el nombre antes de continuar.");
       setRecast(true);
       return;
     }
@@ -138,14 +143,8 @@ export function MapScreen() {
   const openMission = (id: MissionId) => {
     const pin = PINS.find((item) => item.id === id);
     if (!pin) return;
-    const status = missions[id];
-    if (status === "completed" || status === "skipped") {
-      const clue = id === 1 ? "Carta, 4" : id === 2 ? "Radio, 7" : "Huellas, 2";
-      session.setFeedback(status === "completed" ? `${clue} ya está en el tablero.` : `${clue} llegó con apoyo.`);
-      return;
-    }
     travel({ x: pin.ax, y: pin.ay }, () => {
-      session.markExploring(id);
+      if (missions[id] === "pending") session.markExploring(id);
       if (id === 2) session.prepareM2();
       session.setScreen(id === 1 ? "P07" : id === 2 ? "P12" : "P18");
     });
@@ -208,18 +207,24 @@ export function MapScreen() {
             <span>Maletín</span>
           </button>
         )}
-        {agent && !showCast && (
-          <button
-            type="button"
-            className={walking ? "walker is-walk" : "walker is-idle"}
-            style={{ left: spot.x, top: spot.y }}
-            onClick={() => setRecast(true)}
-            aria-label={`Detective ${detectiveName(names, selectedAgents, agent.id)}. Toca para cambiar.`}
-          >
-            <img src={agent.image} alt="" />
-            <span>{detectiveName(names, selectedAgents, agent.id)}</span>
-          </button>
-        )}
+        {sealed && !showCast && chosen.map((id, index) => {
+          const person = agentById(id);
+          if (!person) return null;
+          const shift = (index - (chosen.length - 1) / 2) * 6;
+          return (
+            <button
+              key={id}
+              type="button"
+              className={`${walking ? "walker is-walk" : "walker is-idle"}${chosen.length > 1 ? " crowded" : ""}`}
+              style={{ left: `calc(${spot.x} + ${shift}%)`, top: spot.y, zIndex: 3 + index }}
+              onClick={() => setRecast(true)}
+              aria-label={`Detective ${detectiveName(names, selectedAgents, person.id)}. Toca para cambiar.`}
+            >
+              <img src={person.image} alt="" style={{ animationDelay: `${index * 0.18}s` }} />
+              <span>{detectiveName(names, selectedAgents, person.id)}</span>
+            </button>
+          );
+        })}
       </div>
       {tutorial.opened && (
         <div className="mission-letter" role="dialog" aria-label="Carta de la primera misión">
@@ -241,24 +246,45 @@ export function MapScreen() {
                 onChange={(event) => session.setDetectiveName(session.activeSlot, event.target.value)}
               />
             </label>
-            {castReady && <button type="button" className="btn" onClick={() => setRecast(false)}>Listo</button>}
+            <button
+              type="button"
+              className="btn"
+              onClick={() => {
+                if (!named) {
+                  session.setFeedback(chosen.length < needed ? "Primero elige a tu detective." : "Escribe el nombre antes de continuar.");
+                  return;
+                }
+                setSealed(true);
+                setRecast(false);
+                blip(session.persisted.sounds);
+              }}
+            >
+              Listo
+            </button>
           </div>
+          {mode === "grupal" && <p className="need-name">Cada detective necesita su nombre. El grupo camina junto.</p>}
+          {!named && chosen.length > 0 && <p className="need-name">Escribe el nombre para poder seguir.</p>}
           <div className="cast-row">
             {AGENTS.map((item) => {
               const index = selectedAgents.findIndex((id) => id === item.id);
               const on = index >= 0;
+              const label = on ? (names[index]?.trim() ?? "") : "";
               return (
                 <button
                   key={item.id}
                   type="button"
                   className={on ? "portrait on" : "portrait"}
                   onClick={() => {
+                    const removing = index >= 0;
                     session.pickAgent(item.id);
                     blip(session.persisted.sounds);
+                    if (!removing && !label && !(names[session.activeSlot] ?? "").trim()) {
+                      session.setFeedback("Escribe el nombre antes de continuar.");
+                    }
                   }}
                 >
                   <img src={item.image} alt={item.name} />
-                  {on && <em>{names[index]?.trim() || String(index + 1)}</em>}
+                  {label && <em>{label}</em>}
                 </button>
               );
             })}

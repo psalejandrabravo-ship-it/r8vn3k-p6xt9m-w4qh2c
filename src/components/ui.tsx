@@ -14,20 +14,30 @@ export function TopBar({ title, children }: { title: string; children?: ReactNod
   );
 }
 
-export function Hud({ title }: { title: string }) {
+export function Hud({ title, onPrevious }: { title: string; onPrevious?: () => void }) {
   const session = useSession();
-  const agentId = session.currentAgentId();
-  const agent = agentId ? agentById(agentId) : undefined;
-  const name = agentId ? detectiveName(session.persisted.names, session.persisted.selectedAgents, agentId) : "";
+  const ids = session.persisted.selectedAgents.filter((id) => id > 0);
+  const names = ids.map((id) => detectiveName(session.persisted.names, session.persisted.selectedAgents, id));
   return (
     <header className="hud">
       <button type="button" className="icon-btn back" aria-label="Volver al mapa" onClick={() => session.setScreen("P06")}>
         <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M30 12 L16 24 L30 36" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </button>
-      {agent && <img className="hud-avatar" src={agent.image} alt="" />}
+      {onPrevious && (
+        <button type="button" className="text-arrow" aria-label="Misión anterior" onClick={onPrevious}>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M30 12 L16 24 L30 36" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          Atrás
+        </button>
+      )}
+      <div className="hud-cast">
+        {ids.map((id) => {
+          const agent = agentById(id);
+          return agent ? <img key={id} className="hud-avatar" src={agent.image} alt="" /> : null;
+        })}
+      </div>
       <div>
         <strong>{title}</strong>
-        {name && <small>{name}</small>}
+        {names.length > 0 && <small>{names.join(" · ")}</small>}
       </div>
     </header>
   );
@@ -35,15 +45,22 @@ export function Hud({ title }: { title: string }) {
 
 export function Companion({ pose = "idle" }: { pose?: "idle" | "walk" | "happy" }) {
   const session = useSession();
-  const agentId = session.currentAgentId();
-  const agent = agentId ? agentById(agentId) : undefined;
-  if (!agent) return null;
-  const name = detectiveName(session.persisted.names, session.persisted.selectedAgents, agent.id);
+  const ids = session.persisted.selectedAgents.filter((id) => id > 0);
+  if (!ids.length) return null;
   return (
-    <figure className={`companion pose-${pose}`}>
-      <img src={agent.image} alt="" />
-      <figcaption>{name}</figcaption>
-    </figure>
+    <div className={ids.length > 1 ? "companion-row many" : "companion-row"}>
+      {ids.map((id, index) => {
+        const agent = agentById(id);
+        if (!agent) return null;
+        const name = detectiveName(session.persisted.names, session.persisted.selectedAgents, agent.id);
+        return (
+          <figure key={id} className={`companion pose-${pose}`}>
+            <img src={agent.image} alt="" style={{ animationDelay: `${index * 0.18}s` }} />
+            <figcaption>{name}</figcaption>
+          </figure>
+        );
+      })}
+    </div>
   );
 }
 
