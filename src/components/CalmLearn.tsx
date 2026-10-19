@@ -1,14 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { blip } from "../lib/sound";
 import { useSession } from "../state/sessionStore";
 
 const CARDS = [
-  { id: "agua", label: "Tomar agua", image: "/assets/illustrations/cards/agua.jpg" },
-  { id: "respirar", label: "Respirar", image: "/assets/illustrations/cards/respirar.jpg" },
-  { id: "llorar", label: "Llorar (desahogarse)", image: "/assets/illustrations/cards/llorar.jpg" },
-  { id: "abrazo", label: "Pedir un abrazo", image: "/assets/illustrations/cards/abrazo.jpg" },
-  { id: "ayuda", label: "Pedir ayuda", image: "/assets/illustrations/cards/ayuda.jpg" },
-  { id: "contar", label: "Contar hasta 10", image: "/assets/illustrations/cards/contar.jpg" },
+  { id: "agua", label: "Tomar agua", legend: "Un vaso de agua puede ayudar a bajar el ritmo.", image: "/assets/illustrations/cards/agua.jpg" },
+  { id: "respirar", label: "Respirar", legend: "Respirar despacio ayuda a encontrar la calma.", image: "/assets/illustrations/cards/respirar.jpg" },
+  { id: "llorar", label: "Llorar (desahogarse)", legend: "Llorar también puede aliviar lo que se siente.", image: "/assets/illustrations/cards/llorar.jpg" },
+  { id: "abrazo", label: "Pedir un abrazo", legend: "Un abrazo de alguien de confianza puede acompañar.", image: "/assets/illustrations/cards/abrazo.jpg" },
+  { id: "ayuda", label: "Pedir ayuda", legend: "Pedir ayuda es una forma de cuidarse.", image: "/assets/illustrations/cards/ayuda.jpg" },
+  { id: "contar", label: "Contar hasta 10", legend: "Contar despacio da un momento para elegir qué hacer.", image: "/assets/illustrations/cards/contar.jpg" },
 ];
 
 const NOTES = [
@@ -30,33 +30,45 @@ export function CalmLearn({
 }) {
   const session = useSession();
   const [open, setOpen] = useState<string[]>([]);
+  const [focus, setFocus] = useState<string | null>(null);
+  const card = CARDS.find((item) => item.id === focus);
   const showNote = revealed || open.length > 0;
+  useEffect(() => {
+    session.setFeedback("");
+  }, []);
   return (
     <div className="learn-board">
       <p className="riddle">¿Qué puedo hacer para encontrar la calma?</p>
-      <p className="fine">Todas pueden ayudar. No hay una sola respuesta.</p>
-      <div className="flip-grid">
-        {CARDS.map((card) => {
-          const on = open.includes(card.id);
+      <figure className="strategy-stage">
+        {card ? (
+          <>
+            <img src={card.image} alt="" />
+            <figcaption>
+              <strong>{card.label}</strong>
+              <span>{card.legend}</span>
+            </figcaption>
+          </>
+        ) : (
+          <p>Toca una carta. La forma de calmarse aparece aquí.</p>
+        )}
+      </figure>
+      <div className="flip-grid" aria-label="Formas de encontrar la calma">
+        {CARDS.map((item) => {
+          const on = open.includes(item.id);
           return (
             <button
-              key={card.id}
+              key={item.id}
               type="button"
-              className={on ? "flip open" : "flip"}
+              className={item.id === focus ? "strategy-pick on" : "strategy-pick"}
               aria-pressed={on}
-              aria-label={on ? card.label : "Alternativa oculta"}
+              aria-label={on ? item.label : "Alternativa oculta"}
               onClick={() => {
-                setOpen((prev) => (prev.includes(card.id) ? prev : [...prev, card.id]));
+                setFocus(item.id);
+                setOpen((prev) => (prev.includes(item.id) ? prev : [...prev, item.id]));
                 blip(session.persisted.sounds);
               }}
             >
-              <span className="flip-inner">
-                <span className="flip-front" aria-hidden="true">?</span>
-                <span className="flip-back">
-                  <img src={card.image} alt="" />
-                  <span>{card.label}</span>
-                </span>
-              </span>
+              {on ? <img src={item.image} alt="" /> : <span>?</span>}
             </button>
           );
         })}

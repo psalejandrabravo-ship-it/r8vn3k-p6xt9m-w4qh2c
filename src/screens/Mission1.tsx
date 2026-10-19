@@ -12,6 +12,7 @@ export function Mission1() {
   const done = session.persisted.missions[1] === "completed" || session.persisted.missions[1] === "skipped";
   const learned = riddleSolved || doorOpen || done;
   const solved = () => {
+    session.setFeedback("");
     session.solveRiddle();
     blip(session.persisted.sounds);
   };

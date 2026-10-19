@@ -22,7 +22,7 @@ export function CoverSetup() {
         <div className="cover-copy">
           <h1>{TITLE}</h1>
           <p className="sub">{SUBTITLE}</p>
-          <div className="row">
+          <div className="row cover-actions">
             <button type="button" className="btn" onClick={() => session.startNew()}>Empezar</button>
             {session.hasSavedSession && (
               <button
@@ -35,12 +35,10 @@ export function CoverSetup() {
                 Continuar sesión
               </button>
             )}
+            <button type="button" className="btn secondary" onClick={() => session.openDialog("config")}>Configuración</button>
           </div>
         </div>
       </div>
-      <button type="button" className="icon-btn gear" aria-label="Configuración" onClick={() => session.openDialog("config")}>
-        <GearIcon />
-      </button>
     </section>
   );
 }
