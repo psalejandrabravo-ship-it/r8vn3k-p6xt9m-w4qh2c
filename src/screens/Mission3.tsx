@@ -13,7 +13,7 @@ export function Mission3() {
   const leave = () => {
     session.finishMission(3);
     session.setScreen("P06");
-    session.setFeedback("El número 2 queda en el tablero.");
+    session.setFeedback("El 2 acompaña a tu detective.");
     blip(session.persisted.sounds);
   };
   return (

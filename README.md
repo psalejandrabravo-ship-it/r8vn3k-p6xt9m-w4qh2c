@@ -29,4 +29,6 @@ Reflexiones, la herramienta elegida y las notas del adulto viven en memoria y no
 
 Cuando exista el archivo, escribe su ruta en `public/assets/video/intro.json`, por ejemplo `{ "src": "/assets/video/intro.mp4" }`. Al terminar, el juego pasa al mapa. Si todavía no hay video, se muestra una invitación breve y sigue solo.
 
+En la misión 2, el video de la situación se reserva en `public/assets/video/mision2.json`, por ejemplo `{ "src": "/assets/video/mision2.mp4" }`. Si aún no está, queda el espacio vacío y se puede jugar igual.
+
 En la pantalla del cierre, la persona adulta puede elegir un video de este dispositivo. Si no hay archivo, queda el panel de reserva.

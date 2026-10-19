@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AGENTS, COVER, ROBOT, SUBTITLE, TITLE, agentById, detectiveName, statusLabel } from "../config/gameConfig";
 import { GearIcon } from "../components/Icons";
+import { CarriedNumbers } from "../components/ui";
 import { blip } from "../lib/sound";
 import { useSession } from "../state/sessionStore";
 import type { MissionId } from "../config/gameConfig";
@@ -185,24 +186,24 @@ export function MapScreen() {
           <button
             key={pin.id}
             type="button"
-            className={`pin pop status-${missions[pin.id]}${nextPin?.id === pin.id ? " is-next" : ""}`}
+            className={`pin mark pop status-${missions[pin.id]}${nextPin?.id === pin.id ? " is-next" : ""}${parseFloat(pin.x) > 50 ? " flip" : ""}`}
             style={{ left: pin.x, top: pin.y }}
+            aria-label={`${pin.label}. ${missions[pin.id] === "completed" ? (pin.id === 1 ? "Carta 4" : pin.id === 2 ? "Radio 7" : "Huellas 2") : statusLabel(missions[pin.id])}`}
             onClick={() => openMission(pin.id)}
           >
-            <b>{pin.label}</b>
-            <span>{pin.title}</span>
-            <small>{missions[pin.id] === "completed" ? (pin.id === 1 ? "Carta 4" : pin.id === 2 ? "Radio 7" : "Huellas 2") : statusLabel(missions[pin.id])}</small>
+            <span className="ring" aria-hidden="true" />
+            <b className="stamp">{pin.label}</b>
           </button>
         ))}
         {showCase && (
           <button
             type="button"
-            className="pin case ready pop"
+            className="pin mark case ready pop"
             style={{ left: "74%", top: "74%" }}
             onClick={() => travel({ x: "66%", y: "84%" }, () => session.setScreen("P23"))}
           >
-            <b>3/3</b>
-            <span>Maletín</span>
+            <span className="ring" aria-hidden="true" />
+            <b className="stamp">Maletín</b>
           </button>
         )}
         {sealed && !showCast && chosen.map((id, index) => {
@@ -220,6 +221,7 @@ export function MapScreen() {
             >
               <img src={person.image} alt="" style={{ animationDelay: `${index * 0.18}s` }} />
               <span>{detectiveName(names, selectedAgents, person.id)}</span>
+              <CarriedNumbers />
             </button>
           );
         })}

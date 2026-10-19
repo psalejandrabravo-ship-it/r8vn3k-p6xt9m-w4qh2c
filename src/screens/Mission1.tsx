@@ -19,7 +19,7 @@ export function Mission1() {
   const leave = () => {
     session.finishMission(1);
     session.setScreen("P06");
-    session.setFeedback("El número 4 queda en el tablero.");
+    session.setFeedback("El 4 acompaña a tu detective.");
     blip(session.persisted.sounds);
   };
   return (

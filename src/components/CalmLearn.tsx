@@ -12,9 +12,9 @@ const CARDS = [
 ];
 
 const NOTES = [
-  "¡Bien hecho! Ya tienes tu primer número secreto para abrir el maletín, anótalo y sigue investigando.",
-  "¡Bien hecho! Ya tienes otro número secreto, anótalo y sigue investigando.",
-  "¡Bien hecho! Ya tienes el último número secreto, anótalo y sigue investigando.",
+  "Este número acompaña a tu detective. No hace falta memorizarlo.",
+  "Este número acompaña a tu detective. No hace falta memorizarlo.",
+  "Este número acompaña a tu detective. No hace falta memorizarlo.",
 ];
 
 export function CalmLearn({

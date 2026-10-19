@@ -56,11 +56,27 @@ export function Companion({ pose = "idle" }: { pose?: "idle" | "walk" | "happy" 
         return (
           <figure key={id} className={`companion pose-${pose}`}>
             <img src={agent.image} alt="" style={{ animationDelay: `${index * 0.18}s` }} />
-            <figcaption>{name}</figcaption>
+            <figcaption>
+              {name}
+              <CarriedNumbers />
+            </figcaption>
           </figure>
         );
       })}
     </div>
+  );
+}
+
+export function CarriedNumbers() {
+  const clues = useSession().persisted.cluesFound;
+  const numbers = (["carta", "radio", "huellas"] as const)
+    .map((id) => clues[id]?.number)
+    .filter((number): number is number => typeof number === "number");
+  if (!numbers.length) return null;
+  return (
+    <span className="carried" aria-label={`Números que acompañan: ${numbers.join(", ")}`}>
+      {numbers.map((number) => <b key={number}>{number}</b>)}
+    </span>
   );
 }
 
