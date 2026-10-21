@@ -12,7 +12,6 @@ const CARDS = [
 ];
 
 export function CalmLearn({
-  number,
   revealed,
   onContinue,
 }: {
@@ -26,7 +25,7 @@ export function CalmLearn({
   const [focus, setFocus] = useState<string | null>(null);
   const card = CARDS.find((item) => item.id === focus);
   const seenAll = open.length >= CARDS.length;
-  const showNote = revealed || open.length > 0;
+  const showNote = revealed || open.length >= 3;
   useEffect(() => {
     session.setFeedback("");
   }, []);
@@ -68,16 +67,8 @@ export function CalmLearn({
         })}
       </div>
       {showNote && (
-        <button
-          type="button"
-          className={seenAll || revealed ? "clue-note ready" : "clue-note"}
-          onClick={onContinue}
-          aria-label={`Aprieta el ${number} para avanzar`}
-        >
-          <strong>{number}</strong>
-          <span>
-            <b>{seenAll || revealed ? "Ya viste las formas. Aprieta el número para avanzar." : "Aprieta el número para avanzar."}</b>
-          </span>
+        <button type="button" className="btn" onClick={onContinue}>
+          {seenAll || revealed ? "Seguir" : "Seguir"}
         </button>
       )}
     </div>

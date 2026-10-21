@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { CLUES, TRANSVERSAL, agentById, sourceLabel, statusLabel } from "../config/gameConfig";
+import { CLUES, TRANSVERSAL, sourceLabel, statusLabel } from "../config/gameConfig";
 import { TopBar } from "../components/ui";
 import { hush } from "../lib/speech";
 import { useSession } from "../state/sessionStore";
@@ -72,24 +72,17 @@ function Farewell() {
 
 export function Summary() {
   const session = useSession();
-  const { level, mode, participants, missions, cluesFound, helpsUsed, selectedAgents } = session.persisted;
-  const names = selectedAgents
-    .map((id, index) => {
-      const custom = session.persisted.names[index]?.trim();
-      return custom || agentById(id)?.short || "";
-    })
-    .filter(Boolean);
+  const { level, missions, cluesFound, helpsUsed } = session.persisted;
   return (
     <section className="stack summary">
       <TopBar title="Resumen del acompañante" />
-      <p>Nivel: {level === "exploradores" ? "Exploradores" : "Detectives"}</p>
-      <p>Modo: {mode === "individual" ? "Individual" : `Grupal, ${participants} participantes`}</p>
-      <p>Agentes: {names.join(", ") || "Sin asignar"}</p>
+      <p>Nivel: {level === "exploradores" ? "Exploradores, 4 a 5 años" : "Detectives, 6 a 8 años"}</p>
+      <p>Guía: el robot recuerda los números. No hay personajes ni nombres asignados.</p>
       <h2>Misiones</h2>
       <ul>
-        <li>Sala de las cartas: {statusLabel(missions[1])}</li>
-        <li>Puesto de escucha: {statusLabel(missions[2])}</li>
-        <li>Archivo de las huellas: {statusLabel(missions[3])}</li>
+        <li>El caso de la torre caída: {statusLabel(missions[1])}</li>
+        <li>Detenerse y buscar la calma: {statusLabel(missions[2])}</li>
+        <li>Mirar y decidir: {statusLabel(missions[3])}</li>
       </ul>
       <h2>Pistas</h2>
       <ul>

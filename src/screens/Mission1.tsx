@@ -1,94 +1,119 @@
-import { CALMA } from "../config/gameConfig";
-import { CalmLearn } from "../components/CalmLearn";
-import { Companion, Hud, LetterBoard } from "../components/ui";
+import { useEffect, useState } from "react";
+import { CLOSE_1, QUESTIONS, STORY, STORY_INTRO, STORY_TITLE } from "../config/case";
+import { clueByMission } from "../config/gameConfig";
+import { Hud } from "../components/ui";
+import { Robot, type RobotPose } from "../components/Robot";
 import { blip } from "../lib/sound";
-import { placeTile } from "../state/logic";
+import { speak } from "../lib/speech";
 import { useSession } from "../state/sessionStore";
-import { useState } from "react";
+
+type Phase = "story" | "questions" | "number" | "close";
 
 export function Mission1() {
   const session = useSession();
-  const explorers = session.persisted.level === "exploradores";
-  const { pool, slots, riddleSolved, doorOpen } = session.persisted.activity.m1;
   const done = session.persisted.missions[1] === "completed" || session.persisted.missions[1] === "skipped";
-  const learned = riddleSolved || doorOpen || done;
-  const [showCalm, setShowCalm] = useState(false);
-  const solved = () => {
-    session.setFeedback("");
-    setShowCalm(true);
+  const questions = QUESTIONS[session.persisted.level];
+  const [phase, setPhase] = useState<Phase>(done ? "close" : "story");
+  const [page, setPage] = useState(0);
+  const [turn, setTurn] = useState(0);
+  const [qIndex, setQIndex] = useState(0);
+  const [note, setNote] = useState(STORY_INTRO);
+  const number = clueByMission(1).number;
+  const question = questions[qIndex];
+  const pose: RobotPose = phase === "number" ? "descubrimiento" : phase === "questions" && note !== question?.prompt ? "acompañando" : phase === "story" && page === 0 ? "saludando" : "neutral";
+  const say = phase === "story" ? STORY_INTRO : phase === "questions" ? note : phase === "number" ? `El primer número es ${number}. Yo lo recuerdo.` : CLOSE_1;
+
+  useEffect(() => {
+    if (phase === "number") session.finishMission(1);
+  }, [phase]);
+
+  const goPage = (next: number) => {
+    setPage(next);
+    setTurn((value) => value + 1);
     blip(session.persisted.sounds);
   };
-  const continueAfterCalm = () => {
-    session.solveRiddle();
-    blip(session.persisted.sounds);
+
+  const repeat = () => speak(say, session.persisted.narration);
+  const hint = () => {
+    if (phase !== "questions") return;
+    setNote(question.hint);
   };
-  const leave = () => {
-    session.finishMission(1);
-    session.setScreen("P06");
-    session.setFeedback("El 4 acompaña a tu detective.");
-    blip(session.persisted.sounds);
-  };
+
   return (
-    <section className="play with-scene">
-      <img className="scene-art" src="/assets/illustrations/scenes/sala.jpg" alt="" />
-      <Hud title="Sala de las cartas" />
-      <div className="play-layout">
-        <Companion pose={learned ? "happy" : "idle"} />
-        {learned ? (
-          <CalmLearn step={1} number={4} revealed={done} onContinue={leave} />
-        ) : showCalm ? (
-          <div className="dossier calm-note">
-            <img src="/assets/illustrations/cards/calma.jpg" alt="" />
-            <p className="riddle">La calma es sentirse más tranquilo por dentro.</p>
-            <p>Se siente al respirar y al descansar. Si llega el enojo o la frustración, se puede buscar otra vez.</p>
-            <button type="button" className="btn" onClick={continueAfterCalm}>Seguir</button>
-          </div>
-        ) : (
-          <div className="dossier">
-            {explorers ? (
-              <>
-                <p className="riddle">La siento al respirar,{"\n"}la siento al descansar.{"\n"}Me puedo enojar y frustrar,{"\n"}y luego la voy a buscar.</p>
+    <section className="play story-play">
+      <Hud title={STORY_TITLE} onRepeat={repeat} onHint={phase === "questions" ? hint : undefined} />
+      <div className="story-layout">
+        <Robot pose={pose} say={say} bubble={phase === "number" || phase === "close"} fresh={phase === "number" ? number : undefined} />
+        <div className="book">
+          {phase === "story" && (
+            <>
+              <button
+                type="button"
+                className="book-page"
+                key={turn}
+                onClick={() => { if (page < STORY.length - 1) goPage(page + 1); }}
+              >
+                <img src={STORY[page].image} alt="" />
+                <p>{STORY[page].text}</p>
+              </button>
+              <div className="book-nav">
+                <button type="button" className="text-arrow" disabled={page === 0} onClick={() => goPage(page - 1)}>Anterior</button>
+                <span>{page + 1} / {STORY.length}</span>
+                {page < STORY.length - 1 ? (
+                  <button type="button" className="text-arrow" onClick={() => goPage(page + 1)}>Siguiente</button>
+                ) : (
+                  <button type="button" className="btn" onClick={() => { setPhase("questions"); setNote(questions[0].prompt); }}>Responder</button>
+                )}
+              </div>
+            </>
+          )}
+          {phase === "questions" && question && (
+            <div className="book-page ask">
+              <img src={question.image} alt="" />
+              <div>
+                <p>{question.prompt}</p>
                 <div className="visual-choices">
-                  <button type="button" className="vchoice" onClick={() => session.setFeedback("Los juguetes pueden acompañar, pero no son la palabra. Puedes elegir otra.")}>
-                    <img src="/assets/illustrations/cards/juguetes.jpg" alt="" />
-                    <span>Juguetes</span>
-                  </button>
-                  <button type="button" className="vchoice" onClick={solved}>
-                    <img src="/assets/illustrations/cards/calma.jpg" alt="" />
-                    <span>Calma</span>
-                  </button>
-                  <button type="button" className="vchoice" onClick={() => session.setFeedback("Los dulces son ricos, pero no son la palabra. Escucha otra vez y elige de nuevo.")}>
-                    <img src="/assets/illustrations/cards/dulces.jpg" alt="" />
-                    <span>Dulces</span>
-                  </button>
+                  {question.options.map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      className="choice"
+                      onClick={() => {
+                        if (!option.ok) {
+                          setNote(question.miss);
+                          blip(session.persisted.sounds);
+                          return;
+                        }
+                        blip(session.persisted.sounds);
+                        if (qIndex + 1 < questions.length) {
+                          const next = questions[qIndex + 1];
+                          setQIndex(qIndex + 1);
+                          setNote(next.prompt);
+                        } else {
+                          setPhase("number");
+                        }
+                      }}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
                 </div>
-              </>
-            ) : (
-              <>
-                <p className="riddle">Una palabra que me da paz,{"\n"}cinco letras y no más.{"\n"}Una emoción que rima con alma.{"\n"}Empieza con C y la palabra es…</p>
-                <LetterBoard
-                  pool={pool}
-                  slots={slots}
-                  onPlace={(id) => {
-                    if (slots.every(Boolean)) {
-                      session.setFeedback("La palabra está llena. Toca una letra para cambiarla.");
-                      return;
-                    }
-                    const next = placeTile(pool, slots, id);
-                    if (!next) return;
-                    session.placeM1(id);
-                    blip(session.persisted.sounds);
-                    const word = next.slots.map((slot) => slot?.char ?? "").join("");
-                    if (!next.slots.every(Boolean)) return;
-                    if (word === CALMA) solved();
-                    else session.setFeedback("Todavía no es esa palabra. Empieza con C y rima con alma. Tu turno sigue igual.");
-                  }}
-                  onRemove={(index) => session.returnM1(index)}
-                />
-              </>
-            )}
-          </div>
-        )}
+              </div>
+            </div>
+          )}
+          {phase === "number" && (
+            <div className="book-page ask">
+              <p className="riddle">El número {number} queda en la burbuja del robot.</p>
+              <button type="button" className="btn" onClick={() => setPhase("close")}>Seguir</button>
+            </div>
+          )}
+          {phase === "close" && (
+            <div className="book-page ask">
+              <p className="riddle">{CLOSE_1}</p>
+              <button type="button" className="btn" onClick={() => session.setScreen("P06")}>Volver al mapa</button>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );

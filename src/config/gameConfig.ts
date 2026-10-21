@@ -64,10 +64,10 @@ export const CLUES: Clue[] = [
 ];
 
 export const TOOLS: Tool[] = [
-  { id: "parar", name: "Parar y notar", text: "Puedo detenerme un momento y notar cómo estoy, sin tener que dejar de sentir." },
-  { id: "ayuda", name: "Pedir ayuda", text: "Puedo buscar a una persona de confianza y pensar juntos." },
-  { id: "partes", name: "Mirar por partes", text: "Puedo hacer un solo paso y después el siguiente." },
-  { id: "pausa", name: "Una pausa", text: "Puedo descansar. Lo que ya hice sigue guardado." },
+  { id: "parar", name: "Reconocer el enojo", text: "El enojo y la frustración son emociones válidas." },
+  { id: "ayuda", name: "Decirlo sin dañar", text: "Puedo expresar lo que siento sin lastimar a nadie ni dañar cosas." },
+  { id: "partes", name: "Buscar una calma", text: "Puedo probar algo que me ayude a bajar un poco la intensidad." },
+  { id: "pausa", name: "Probar otra forma", text: "Puedo pedir ayuda, cambiar de estrategia o volver después." },
 ];
 
 export const SCENES: { id: string; title: string; text: string }[] = [

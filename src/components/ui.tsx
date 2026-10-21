@@ -14,30 +14,19 @@ export function TopBar({ title, children }: { title: string; children?: ReactNod
   );
 }
 
-export function Hud({ title, onPrevious }: { title: string; onPrevious?: () => void }) {
+export function Hud({ title, onRepeat, onHint }: { title: string; onRepeat?: () => void; onHint?: () => void }) {
   const session = useSession();
-  const ids = session.persisted.selectedAgents.filter((id) => id > 0);
-  const names = ids.map((id) => detectiveName(session.persisted.names, session.persisted.selectedAgents, id));
   return (
     <header className="hud">
       <button type="button" className="icon-btn back" aria-label="Volver al mapa" onClick={() => session.setScreen("P06")}>
         <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M30 12 L16 24 L30 36" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </button>
-      {onPrevious && (
-        <button type="button" className="text-arrow" aria-label="Misión anterior" onClick={onPrevious}>
-          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M30 12 L16 24 L30 36" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          Atrás
-        </button>
-      )}
-      <div className="hud-cast">
-        {ids.map((id) => {
-          const agent = agentById(id);
-          return agent ? <img key={id} className="hud-avatar" src={agent.image} alt="" /> : null;
-        })}
-      </div>
       <div>
         <strong>{title}</strong>
-        {names.length > 0 && <small>{names.join(" · ")}</small>}
+      </div>
+      <div className="row tight">
+        {onRepeat && <button type="button" className="text-arrow" onClick={onRepeat}>Repetir</button>}
+        {onHint && <button type="button" className="text-arrow" onClick={onHint}>Una pista</button>}
       </div>
     </header>
   );

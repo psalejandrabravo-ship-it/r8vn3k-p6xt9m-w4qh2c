@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Feedback, FullscreenButton, Orientation } from "./components/ui";
-import { LINES } from "./config/gameConfig";
-import { hush, speak } from "./lib/speech";
+import { hush } from "./lib/speech";
 import { CoverSetup, IntroVideo, MapScreen } from "./screens/Early";
 import { Mission1 } from "./screens/Mission1";
 import { Mission2 } from "./screens/Mission2";
@@ -25,18 +24,11 @@ function Flow() {
 
 export function App() {
   const session = useSession();
-  const { screen, narration, reducedMotion } = session.persisted;
-  const feedback = session.feedback;
+  const { screen, reducedMotion } = session.persisted;
 
   useEffect(() => {
-    const line = LINES[screen];
-    if (line) speak(line, narration);
-    return () => hush();
-  }, [screen, narration]);
-
-  useEffect(() => {
-    if (feedback) speak(feedback, narration);
-  }, [feedback, narration]);
+    hush();
+  }, [screen]);
 
   useEffect(() => {
     document.body.classList.toggle("reduce", reducedMotion);

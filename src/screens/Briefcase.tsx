@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { CLUES, CODE, CODE_ICONS, TOOLS } from "../config/gameConfig";
 import { ClueIcon } from "../components/Icons";
-import { CodeToken, Companion, Hud } from "../components/ui";
+import { CodeToken, Hud } from "../components/ui";
+import { Robot } from "../components/Robot";
 import { blip } from "../lib/sound";
 import { useSession } from "../state/sessionStore";
 
@@ -18,18 +19,18 @@ export function Briefcase() {
     session.setScreen("P28");
   };
   return (
-    <section className="play">
-      <Hud title="El maletín" onPrevious={() => session.setScreen("P18")} />
-      <div className="play-layout">
-        <Companion pose={ready ? "happy" : "idle"} />
+    <section className="play story-play">
+      <Hud title="El maletín" />
+      <div className="story-layout">
+        <Robot
+          pose={ready ? "descubrimiento" : "pensando"}
+          say={ready ? "Dentro están las herramientas que aprendimos. No hay un premio que haya que llevarse." : "Estos son los números que encontramos. El orden es el de las misiones."}
+          bubble
+        />
         <div className="dossier">
           {!ready && (
             <>
-              <p className="lead">
-                {found.length < 3
-                  ? `Falta ${CLUES.filter((clue) => !session.persisted.cluesFound[clue.id]).map((clue) => clue.name).join(", ")}. El orden es carta, radio y huellas: 4, 7 y 2.`
-                  : "Las tres pistas están aquí. El orden es 4, 7 y 2."}
-              </p>
+              <p className="lead">Coloca los números en el orden de las misiones. Si falta uno, el maletín espera.</p>
               <div className="row">
                 <button type="button" className={mode === "iconos" ? "choice on" : "choice"} onClick={() => { setMode("iconos"); session.clearCode(); }}>Pistas</button>
                 <button type="button" className={mode === "numeros" ? "choice on" : "choice"} onClick={() => { setMode("numeros"); session.clearCode(); }}>Números</button>
@@ -54,7 +55,7 @@ export function Briefcase() {
           )}
           {ready && (
             <>
-              <p className="lead">Dentro no hay un premio. Hay herramientas para cuando algo cuesta. Puedes llevarte una, o ninguna.</p>
+              <p className="lead">Reconocer el enojo, decirlo sin dañar, buscar una forma de calma y probar otra estrategia. Puedes mirar una herramienta, o ninguna.</p>
               {TOOLS.map((tool) => (
                 <button key={tool.id} type="button" className="choice" onClick={() => { session.seeTool(tool.id); go(tool.id); }}>
                   {tool.name}. {tool.text}

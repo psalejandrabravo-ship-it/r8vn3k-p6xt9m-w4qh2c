@@ -1,71 +1,94 @@
-import { ALMA, SCENE_ORDER, SCENES } from "../config/gameConfig";
-import { CalmLearn } from "../components/CalmLearn";
-import { Companion, Hud } from "../components/ui";
+import { useEffect, useState } from "react";
+import { CLOSE_3, DECIDE_STEPS, TOWER_OPTIONS } from "../config/case";
+import { clueByMission } from "../config/gameConfig";
+import { Hud } from "../components/ui";
+import { Robot, type RobotPose } from "../components/Robot";
 import { blip } from "../lib/sound";
-import { placeScene, solvedScenes } from "../state/logic";
+import { speak } from "../lib/speech";
 import { useSession } from "../state/sessionStore";
+
+type Phase = "look" | "number" | "close";
 
 export function Mission3() {
   const session = useSession();
-  const { pool, slots, ordered } = session.persisted.activity.m3;
+  const older = session.persisted.level === "detectives";
   const done = session.persisted.missions[3] === "completed" || session.persisted.missions[3] === "skipped";
-  const ready = ordered || done;
-  const leave = () => {
-    session.finishMission(3);
-    session.setScreen("P06");
-    session.setFeedback("El 2 acompaña a tu detective.");
-    blip(session.persisted.sounds);
-  };
+  const [phase, setPhase] = useState<Phase>(done ? "close" : "look");
+  const [picked, setPicked] = useState<string | null>(null);
+  const [hinted, setHinted] = useState(false);
+  const [seen, setSeen] = useState<string[]>([]);
+  const number = clueByMission(3).number;
+  const choice = TOWER_OPTIONS.find((item) => item.id === picked);
+  const say = phase === "number"
+    ? `El tercer número es ${number}. Yo lo recuerdo.`
+    : phase === "close"
+      ? CLOSE_3
+      : hinted
+        ? "Pedir ayuda, probar de otro modo o descansar y volver pueden servir."
+        : choice
+          ? `${choice.title} puede servir. También había otras formas.`
+          : "La torre sigue en el suelo. ¿Qué puede hacer ahora? No hay una sola respuesta.";
+  const pose: RobotPose = phase === "number" ? "descubrimiento" : picked ? "acompañando" : "pensando";
+
+  useEffect(() => {
+    if (phase === "number") session.finishMission(3);
+  }, [phase]);
+
+  const repeat = () => speak(say, session.persisted.narration);
+  const hint = () => setHinted(true);
+
   return (
-    <section className="play with-scene">
-      <img className="scene-art" src="/assets/illustrations/scenes/sala.jpg" alt="" />
-      <Hud title="Archivo de las huellas" onPrevious={() => session.setScreen("P12")} />
-      <div className="play-layout">
-        <Companion pose={ready ? "happy" : "idle"} />
-        {ready ? (
-          <CalmLearn step={3} number={2} revealed={done} onContinue={leave} />
-        ) : (
+    <section className="play story-play">
+      <Hud title="Mirar y decidir" onRepeat={repeat} onHint={phase === "look" ? hint : undefined} />
+      <div className="story-layout">
+        <Robot pose={pose} say={phase === "look" && !picked ? say : say} bubble={phase === "number" || phase === "close"} fresh={phase === "number" ? number : undefined} />
+        {phase === "look" ? (
           <div className="dossier">
-            <p className="lead">Ordena los momentos de Alma: A, B, C y D. Si no coincide, nada se pierde.</p>
-            <div className="slots" aria-label="Orden de la historia">
-              {slots.map((id, index) => {
-                const scene = SCENES.find((item) => item.id === id);
-                return (
-                  <button key={index} type="button" className="scene-slot" onClick={() => session.returnM3(index)}>
-                    {scene ? `${scene.id}. ${scene.title}` : index + 1}
-                  </button>
-                );
-              })}
+            {older && (
+              <ol className="steps">
+                {DECIDE_STEPS.map((step, index) => (
+                  <li key={step.title}>
+                    <img src={step.image} alt="" />
+                    <b>{index + 1}. {step.title}</b>
+                    <span>{step.text}</span>
+                  </li>
+                ))}
+              </ol>
+            )}
+            <p className="riddle">¿Qué puede hacer ahora con la torre?</p>
+            <div className="visual-choices">
+              {TOWER_OPTIONS.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  className={picked === option.id ? "vchoice on" : "vchoice"}
+                  onClick={() => {
+                    setPicked(option.id);
+                    setHinted(false);
+                    setSeen((prev) => prev.includes(option.id) ? prev : [...prev, option.id]);
+                    blip(session.persisted.sounds);
+                  }}
+                >
+                  <img src={option.image} alt="" />
+                  <span>{option.title}</span>
+                  {older && <small>{option.text}</small>}
+                </button>
+              ))}
             </div>
-            <div className="tray">
-              {pool.map((id) => {
-                const scene = SCENES.find((item) => item.id === id);
-                if (!scene) return null;
-                return (
-                  <button
-                    key={id}
-                    type="button"
-                    className="choice"
-                    onClick={() => {
-                      if (slots.every(Boolean)) {
-                        session.setFeedback("Los cuatro espacios están llenos. Toca uno para devolver ese momento.");
-                        return;
-                      }
-                      const next = placeScene(pool, slots, id);
-                      if (!next) return;
-                      session.placeM3(id);
-                      blip(session.persisted.sounds);
-                      if (next.slots.every(Boolean) && !solvedScenes(next.slots, SCENE_ORDER)) {
-                        session.setFeedback("Este orden no cuenta la historia. Toca un momento para moverlo. Tu turno sigue igual.");
-                      }
-                    }}
-                  >
-                    <img src={ALMA.image} alt="" />
-                    {scene.id}. {scene.title}
-                  </button>
-                );
-              })}
-            </div>
+            {picked && <p>{choice?.text} No es la única manera.</p>}
+            <button type="button" className="btn" disabled={!picked} onClick={() => setPhase("number")}>
+              {seen.length > 1 ? "Seguir" : "Elegir esta y seguir"}
+            </button>
+          </div>
+        ) : phase === "number" ? (
+          <div className="dossier calm-note">
+            <p className="riddle">El número {number} queda en la burbuja del robot.</p>
+            <button type="button" className="btn" onClick={() => setPhase("close")}>Seguir</button>
+          </div>
+        ) : (
+          <div className="dossier calm-note">
+            <p className="riddle">{CLOSE_3}</p>
+            <button type="button" className="btn" onClick={() => session.setScreen("P06")}>Volver al mapa</button>
           </div>
         )}
       </div>

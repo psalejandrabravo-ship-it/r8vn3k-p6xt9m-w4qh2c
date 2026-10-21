@@ -36,6 +36,7 @@ export interface Persisted {
   narration: boolean;
   sounds: boolean;
   reducedMotion: boolean;
+  levelSet: boolean;
   selectedAgents: number[];
   names: string[];
   currentTurn: number;
@@ -75,6 +76,7 @@ export function freshPersisted(): Persisted {
     narration: false,
     sounds: true,
     reducedMotion: false,
+    levelSet: false,
     selectedAgents: [],
     names: [],
     currentTurn: 0,
@@ -135,7 +137,16 @@ function loadPersisted(): Persisted | null {
     const parsed: unknown = JSON.parse(raw);
     if (!isPersisted(parsed)) return null;
     const names = Array.isArray(parsed.names) ? parsed.names : [];
-    return { ...parsed, names };
+    const progressed = parsed.screen !== "P01"
+      || Object.values(parsed.missions).some((status) => status !== "pending")
+      || Object.keys(parsed.cluesFound ?? {}).length > 0;
+    const stored = parsed as Persisted & { levelSet?: boolean };
+    return {
+      ...freshPersisted(),
+      ...parsed,
+      names,
+      levelSet: typeof stored.levelSet === "boolean" ? stored.levelSet : progressed,
+    };
   } catch {
     return null;
   }
@@ -153,6 +164,7 @@ interface Store {
   patch: (partial: Partial<Persisted>) => void;
   setScreen: (screen: ScreenId) => void;
   startNew: () => void;
+  beginPlay: () => void;
   continueSaved: () => boolean;
   newVisit: () => void;
   setLevel: (level: Level) => void;
@@ -207,8 +219,12 @@ interface Store {
 const Ctx = createContext<Store | null>(null);
 
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const [persisted, setPersisted] = useState<Persisted>(freshPersisted);
-  const [saveOn, setSaveOn] = useState(false);
+  const [persisted, setPersisted] = useState<Persisted>(() => {
+    const saved = loadPersisted();
+    if (!saved) return freshPersisted();
+    return { ...saved, screen: "P01" };
+  });
+  const [saveOn, setSaveOn] = useState(() => loadPersisted() !== null);
   const [hasSavedSession, setHasSavedSession] = useState(() => loadPersisted() !== null);
   const [memory, setMemory] = useState<MemoryState>(emptyMemory);
   const [dialog, setDialog] = useState<DialogId>(null);
@@ -272,12 +288,20 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           ...freshPersisted(),
           screen: "P05",
           level: prev.level,
+          levelSet: prev.levelSet,
           mode: prev.mode,
           participants: prev.participants,
           narration: prev.narration,
           sounds: prev.sounds,
           reducedMotion: prev.reducedMotion,
         }));
+      },
+      beginPlay: () => {
+        setSaveOn(true);
+        setHasSavedSession(true);
+        setFeedback("");
+        setDialog(null);
+        update((prev) => ({ ...prev, screen: "P05" }));
       },
       continueSaved: () => {
         const saved = loadPersisted();
@@ -298,15 +322,16 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         setPersisted(freshPersisted());
       },
       setLevel: (level) => update((prev) => {
-        if (prev.level === level) return prev;
+        if (prev.level === level) return { ...prev, levelSet: true };
         const keepBoard = prev.missions[2] === "completed" || prev.missions[2] === "skipped";
-        if (keepBoard) return { ...prev, level };
+        if (keepBoard) return { ...prev, level, levelSet: true };
         const board = level === "exploradores"
           ? { pool: [{ id: "pac", char: "PACIENCIA" }, { id: "imp", char: "IMPULSO" }], slots: [null] as (Tile | null)[] }
           : resetTiles(PACIENCIA);
         return {
           ...prev,
           level,
+          levelSet: true,
           activity: {
             ...prev.activity,
             m2: { ...prev.activity.m2, prepared: true, opened: false, ...board },
