@@ -41,7 +41,7 @@ export const STORY: StoryPage[] = [
   {
     id: "enojo",
     image: "/assets/story/pagina-4.png",
-    text: "Había trabajado mucho.\nSintió la cara caliente y apretó las manos.\n¡Estaba muy enojado y frustrado!",
+    text: "Había trabajado mucho.\nSintió la cara roja y apretó las manos.\n¡Estaba muy enojado y frustrado!",
   },
   {
     id: "impulso",
@@ -97,12 +97,12 @@ export const QUESTIONS: Record<Level, CaseQuestion[]> = {
   exploradores: [
     {
       prompt: "¿Cómo se sintió cuando se cayó la torre?",
-      hint: "Apretó las manos y tenía la cara caliente.",
+      hint: "Apretó las manos y tenía la cara roja.",
       support: "/assets/story/pagina-4.png",
       options: [
         { id: "enojo", label: "Enojado o frustrado.", reply: "Sí. Quería que la torre resultara y se cayó. Eso puede causar enojo o frustración.", next: "continue" },
-        { id: "contento", label: "Contento.", reply: "Miremos las pistas: apretó las manos y sintió la cara caliente. ¿Cómo podría sentirse?", next: "retry" },
-        { id: "tranquilo", label: "Tranquilo.", reply: "Miremos las pistas: apretó las manos y sintió la cara caliente. ¿Cómo podría sentirse?", next: "retry" },
+        { id: "contento", label: "Contento.", reply: "Miremos las pistas: apretó las manos y sintió la cara roja. ¿Cómo podría sentirse?", next: "retry" },
+        { id: "tranquilo", label: "Tranquilo.", reply: "Miremos las pistas: apretó las manos y sintió la cara roja. ¿Cómo podría sentirse?", next: "retry" },
       ],
     },
     {
@@ -122,7 +122,7 @@ export const QUESTIONS: Record<Level, CaseQuestion[]> = {
   detectives: [
     {
       prompt: "¿Cómo se sintió el personaje y qué pistas del cuento te ayudan a saberlo?",
-      hint: "Apretó las manos y tenía la cara caliente.",
+      hint: "Apretó las manos y tenía la cara roja.",
       support: "/assets/story/pagina-4.png",
       options: [
         { id: "enojo", label: "Enojado o frustrado.", reply: "Las pistas nos ayudan a comprender cómo podría sentirse. Había trabajado mucho y la torre no resultó como esperaba.", next: "continue" },

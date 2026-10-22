@@ -39,7 +39,7 @@ export function Mission2() {
   };
 
   return (
-    <section className={`play story-play guide-play${phase === "explain" || phase === "number" || phase === "close" ? " is-talk" : ""}`}>
+    <section className={`play story-play guide-play phase-${phase}${phase === "explain" || phase === "number" || phase === "close" ? " is-talk" : ""}`}>
       <Hud title="Detenerse y buscar la calma" onHint={phase === "word" || phase === "ways" ? hint : undefined} />
       <div className="story-layout">
         <Robot

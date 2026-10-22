@@ -33,19 +33,6 @@ export function CalmLearn({
   return (
     <div className="learn-board">
       <p className="riddle">¿Qué puedo hacer para encontrar la calma?</p>
-      <figure className="strategy-stage">
-        {card ? (
-          <>
-            <img src={card.image} alt="" />
-            <figcaption>
-              <strong>{card.label}</strong>
-              <span>{card.legend}</span>
-            </figcaption>
-          </>
-        ) : (
-          <p>Toca una carta. La forma de calmarse aparece aquí.</p>
-        )}
-      </figure>
       <div className="flip-grid" aria-label="Formas de encontrar la calma">
         {CARDS.map((item) => {
           const on = open.includes(item.id);
@@ -53,20 +40,24 @@ export function CalmLearn({
             <button
               key={item.id}
               type="button"
-              className={item.id === focus ? "strategy-pick on" : "strategy-pick"}
+              className={item.id === focus ? "calm-card is-open on" : on ? "calm-card is-open" : "calm-card"}
               aria-pressed={on}
-              aria-label={on ? item.label : "Alternativa oculta"}
+              aria-label={on ? item.label : "Tarjeta oculta. Toca para ver una forma de calma."}
               onClick={() => {
                 setFocus(item.id);
                 setOpen((prev) => (prev.includes(item.id) ? prev : [...prev, item.id]));
                 blip(session.persisted.sounds);
               }}
             >
-              {on ? <img src={item.image} alt="" /> : <span>?</span>}
+              <span className="calm-spin">
+                <span className="calm-face back"><img src="/assets/ui/carta-calma.png" alt="" /></span>
+                <span className="calm-face front"><img src={item.image} alt="" /></span>
+              </span>
             </button>
           );
         })}
       </div>
+      <p className="calm-legend">{card ? card.legend : "Toca una tarjeta para descubrir una forma de calma."}</p>
       {showNote && (
         <button type="button" className="advance-arrow" aria-label="Seguir" onClick={onContinue}>
           <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 10 L34 24 L16 38" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>

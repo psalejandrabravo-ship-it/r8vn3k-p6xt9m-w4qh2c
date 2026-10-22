@@ -905,8 +905,7 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
   border-top-color: transparent; border-left-color: transparent; border-right-color: #fffaf3;
 }
 .case-play.phase-questions:not(.is-reply):not(.is-bridge) .case-ask { padding: 2% 8% 8%; align-items: center; }
-.case-play.phase-questions:not(.is-reply):not(.is-bridge) .visual-choices,
-.case-play.phase-questions:not(.is-reply):not(.is-bridge) .action-cards { width: min(100%, 640px); }
+.case-play.phase-questions:not(.is-reply):not(.is-bridge) .visual-choices { width: min(100%, 640px); }
 .case-play.phase-open,
 .case-play.phase-story {
   background: #24588a url("/assets/ui/papel-cuento.jpg") center / cover no-repeat;
@@ -918,17 +917,25 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .book-open-hit { border: 0; background: transparent; padding: 0; cursor: pointer; width: min(88%, 860px); }
 .book-open-hit img { width: 100%; height: auto; display: block; }
 .case-play.is-talk .robot-guide {
-  left: 50%; bottom: 16%; width: min(560px, 58cqw); translate: -50% 0; align-items: center;
+  left: 50%; bottom: 3%; width: min(360px, 40cqw); translate: -50% 0; align-items: center;
 }
 .case-play.is-talk .robot-stack,
 .case-play.is-talk .robot-body,
-.case-play.is-talk .robot-body img { width: min(560px, 58cqw); height: auto; }
+.case-play.is-talk .robot-body img { width: min(340px, 38cqw); max-height: 36cqh; height: auto; object-fit: contain; }
 .case-play.is-bridge .robot-guide {
-  left: 50%; bottom: 14%; width: min(560px, 58cqw); translate: -50% 0; align-items: center;
+  left: 50%; bottom: 6%; width: min(420px, 46cqw); translate: -50% 0; align-items: center;
 }
 .case-play.is-bridge .robot-stack,
 .case-play.is-bridge .robot-body,
-.case-play.is-bridge .robot-body img { width: min(560px, 58cqw); height: auto; animation: none; }
+.case-play.is-bridge .robot-body img { width: min(400px, 44cqw); max-height: 46cqh; height: auto; object-fit: contain; animation: none; }
+.case-play.is-reply .robot-guide {
+  left: 2%; bottom: 2%; width: min(230px, 26cqw); translate: none; align-items: flex-start;
+}
+.case-play.is-reply .robot-stack,
+.case-play.is-reply .robot-body,
+.case-play.is-reply .robot-body img { width: min(210px, 24cqw); max-height: 28cqh; height: auto; }
+.case-play.is-reply .reply-stage { justify-content: flex-start; padding: 1% 10% 6%; }
+.case-play.is-reply .reply-art { max-height: 40cqh; }
 .case-play.is-talk .robot-say { max-width: min(540px, 72cqw); text-align: center; }
 .case-play .thought, .guide-play .thought { left: 100%; right: auto; top: 4%; translate: 10px 0; }
 .case-play .story-stage,
@@ -982,13 +989,15 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .case-play .support { width: min(280px, 36%); max-height: 28cqh; }
 .case-play .visual-choices { width: min(720px, 100%); }
 .case-play .visual-choices .choice { min-height: 64px; font-size: 1.12rem; }
-.case-play .action-cards { flex: 1; width: 100%; min-height: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; align-items: stretch; }
+.case-play.phase-questions:not(.is-reply):not(.is-bridge) .action-cards { width: min(100%, 980px); flex: 0; align-items: end; }
+.case-play .action-cards { flex: 0; width: min(100%, 980px); min-height: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: end; }
 .case-play .action-card {
-  height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px;
-  background: rgba(255, 250, 243, 0.96); color: var(--indigo); border: 2px solid var(--indigo);
-  border-radius: 16px; padding: 8px; font: inherit; font-weight: 800; text-align: center;
+  height: auto; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px;
+  background: transparent; color: var(--indigo); border: 0;
+  border-radius: 16px; padding: 0; font: inherit; font-weight: 800; text-align: center;
 }
-.case-play .action-card img { width: 100%; height: auto; flex: 1; min-height: 0; max-height: 42cqh; object-fit: contain; }
+.case-play .action-card img { width: 100%; height: auto; max-height: 34cqh; object-fit: contain; background: transparent; filter: drop-shadow(0 12px 10px rgba(20, 12, 28, 0.28)); }
+.case-play .action-card span { background: #fffaf3; border-radius: 12px; padding: 6px 8px; }
 .case-play .reply-stage, .case-play .number-stage {
   height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 16px; padding-left: 30%;
@@ -1003,14 +1012,14 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
   background: #fffaf3; border: 10px solid #e07a5f; border-radius: 50%;
   box-shadow: 0 8px 0 rgba(43, 33, 85, 0.12);
 }
-.case-play.is-talk .reply-stage,
-.case-play.is-talk .number-stage { padding: 4% 8% 30%; }
+.case-play.is-talk .number-stage { padding: 4% 8% 36%; }
+.case-play.is-talk .reply-stage { padding: 1% 8% 4%; justify-content: flex-start; }
 .guide-play.is-talk .robot-guide {
-  left: 50%; bottom: 14%; width: min(520px, 54cqw); translate: -50% 0; align-items: center;
+  left: 50%; bottom: 3%; width: min(340px, 38cqw); translate: -50% 0; align-items: center;
 }
 .guide-play.is-talk .robot-stack,
 .guide-play.is-talk .robot-body,
-.guide-play.is-talk .robot-body img { width: min(520px, 54cqw); height: auto; }
+.guide-play.is-talk .robot-body img { width: min(320px, 36cqw); max-height: 34cqh; height: auto; object-fit: contain; }
 .guide-play.is-talk .robot-say { max-width: min(520px, 68cqw); text-align: center; }
 .guide-play.is-talk .riddle { display: none; }
 .guide-play.is-talk .dossier { padding-bottom: 32%; justify-content: flex-start; }
@@ -1018,7 +1027,35 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .guide-play .riddle { text-align: center; max-width: 34rem; }
 .guide-play .visual-choices, .guide-play .flip-grid { width: min(100%, 860px); }
 .guide-play .flip-grid { margin-top: auto; }
-.guide-play .strategy-stage { min-height: 0; }
+.guide-play.phase-word .robot-guide {
+  left: 24%; top: 46%; bottom: auto; width: min(300px, 32cqw); align-items: flex-start;
+}
+.guide-play.phase-word .robot-stack,
+.guide-play.phase-word .robot-body,
+.guide-play.phase-word .robot-body img { width: min(280px, 30cqw); height: auto; }
+.guide-play.phase-word .robot-say {
+  position: absolute; right: 108%; top: 6%; margin: 0; width: min(240px, 28cqw); text-align: left;
+}
+.guide-play.phase-word .robot-say::after {
+  left: auto; right: -14px; bottom: 24px;
+  border-top-color: transparent; border-left-color: #fffaf3;
+}
+.calm-card {
+  position: relative; aspect-ratio: 3 / 4; border: 0; background: transparent; padding: 0;
+  perspective: 900px; cursor: pointer;
+}
+.calm-spin {
+  position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 0.55s ease;
+}
+.calm-card.is-open .calm-spin { transform: rotateY(180deg); }
+.calm-face {
+  position: absolute; inset: 0; backface-visibility: hidden; display: grid; place-items: center;
+}
+.calm-face img { width: 100%; height: 100%; object-fit: contain; }
+.calm-face.front { transform: rotateY(180deg); }
+.calm-card.on { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 18px; }
+.calm-legend { margin: 8px 0 0; min-height: 2.8em; max-width: 40rem; font-weight: 800; color: var(--indigo); }
+body.reduce .calm-spin { transition: none; }
 .guide-play .strategy-stage img { max-height: min(34cqh, 280px); }
 .map-return { position: absolute; right: 6%; top: 46%; z-index: 5; }
 .guide-play .thought { left: 100%; right: auto; top: 4%; translate: 10px 0; }
