@@ -928,7 +928,7 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
   filter: drop-shadow(0 18px 12px rgba(20, 12, 28, 0.35));
 }
 .case-play .book-wrap { position: relative; width: min(100%, 1000px); }
-.case-play .book-pic { width: 100%; max-height: 50cqh; object-fit: contain; }
+.case-play .book-pic { width: 100%; max-height: 50cqh; object-fit: contain; background: transparent; box-shadow: none; }
 .case-play .reading.in-book {
   position: absolute; left: 14%; right: 14%; bottom: 58%; z-index: 3;
   color: #161616; text-shadow: none; font-size: clamp(1.2rem, 2.4cqw, 1.6rem);

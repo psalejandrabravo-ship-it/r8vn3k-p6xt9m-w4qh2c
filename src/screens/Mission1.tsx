@@ -8,8 +8,8 @@ import { speak } from "../lib/speech";
 import { useSession } from "../state/sessionStore";
 
 type Phase = "open" | "story" | "questions" | "number" | "close";
-const BOOK_OPEN = "/assets/story/libro-abierto.png";
-const BOOK_TURN = "/assets/story/libro-pasa.png";
+const BOOK_OPEN = "/assets/story/libro-abierto-limpio.png";
+const BOOK_TURN = "/assets/story/libro-pasa-limpio.png";
 
 export function Mission1() {
   const session = useSession();
