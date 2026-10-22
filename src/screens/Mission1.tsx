@@ -77,11 +77,19 @@ export function Mission1() {
     : phase === "close" ? `${CLOSE_1} ${CLOSE_1_NEXT}`
     : undefined;
 
-  const repeat = () => {
-    const text = phase === "story" ? STORY[page].text
-      : phase === "questions" && bridged && !reply ? question.prompt
-      : say;
-    if (text) speak(text, narration);
+  const advance = () => {
+    if (phase === "questions" && !bridged) { setBridged(true); return; }
+    if (phase === "questions" && reply) {
+      if (replyNext === "retry") { setReply(null); setPicked(null); setHint(null); return; }
+      if (replyNext === "number" || qIndex + 1 >= questions.length) { setPhase("number"); return; }
+      setQIndex(qIndex + 1);
+      setReply(null);
+      setPicked(null);
+      setHint(null);
+      return;
+    }
+    if (phase === "number") { setPhase("close"); return; }
+    if (phase === "close") session.setScreen("P06");
   };
 
   const investigate = () => {
@@ -97,7 +105,7 @@ export function Mission1() {
 
   return (
     <section className={`play story-play case-play phase-${phase}${reply ? " is-reply" : ""}${phase === "questions" && !bridged ? " is-bridge" : ""}${talking ? " is-talk" : ""}${hint ? " has-hint" : ""}`}>
-      <Hud title={STORY_TITLE} onRepeat={repeat} onHint={asking ? () => setHint(question.hint) : undefined} />
+      <Hud title={STORY_TITLE} onHint={asking ? () => setHint(question.hint) : undefined} />
       <div className="story-layout">
         <Robot
           pose={pose}
@@ -105,7 +113,7 @@ export function Mission1() {
           bubble={phase === "number" || phase === "close"}
           fresh={phase === "number" ? number : undefined}
           src={phase === "questions" && !bridged ? "/assets/robot/pensando-sentado.gif" : undefined}
-          onTap={asking ? () => setHint(question.hint) : undefined}
+          onTap={asking ? () => setHint(question.hint) : phase === "story" || phase === "open" ? undefined : advance}
         />
         {phase === "open" && (
           <div className="story-stage open-stage">

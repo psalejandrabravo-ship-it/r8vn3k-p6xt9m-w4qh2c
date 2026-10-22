@@ -5,7 +5,6 @@ import { CalmLearn } from "../components/CalmLearn";
 import { Hud, LetterBoard } from "../components/ui";
 import { Robot, type RobotPose } from "../components/Robot";
 import { blip } from "../lib/sound";
-import { speak } from "../lib/speech";
 import { placeTile } from "../state/logic";
 import { useSession } from "../state/sessionStore";
 
@@ -34,7 +33,6 @@ export function Mission2() {
     setNote(CALM_NOTE);
     blip(session.persisted.sounds);
   };
-  const repeat = () => { if (say) speak(say, session.persisted.narration); };
   const hint = () => {
     if (phase === "word") setNote(CALM_HINT);
     if (phase === "ways") setWaysHint("No hay una sola forma. Puedes mirar otra posibilidad.");
@@ -42,9 +40,15 @@ export function Mission2() {
 
   return (
     <section className={`play story-play guide-play${phase === "explain" || phase === "number" || phase === "close" ? " is-talk" : ""}`}>
-      <Hud title="Detenerse y buscar la calma" onRepeat={repeat} onHint={phase === "word" || phase === "ways" ? hint : undefined} />
+      <Hud title="Detenerse y buscar la calma" onHint={phase === "word" || phase === "ways" ? hint : undefined} />
       <div className="story-layout">
-        <Robot pose={pose} say={say} bubble={phase === "number" || phase === "close"} fresh={phase === "number" ? number : undefined} />
+        <Robot
+          pose={pose}
+          say={say}
+          bubble={phase === "number" || phase === "close"}
+          fresh={phase === "number" ? number : undefined}
+          onTap={phase === "explain" ? () => setPhase("ways") : phase === "number" ? () => setPhase("close") : phase === "close" ? () => session.setScreen("P06") : undefined}
+        />
         {phase === "ways" ? (
           <CalmLearn step={2} number={number} revealed={done} onContinue={() => setPhase("number")} />
         ) : phase === "explain" ? (

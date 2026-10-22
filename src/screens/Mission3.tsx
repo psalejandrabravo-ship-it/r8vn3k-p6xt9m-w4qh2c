@@ -4,7 +4,6 @@ import { clueByMission } from "../config/gameConfig";
 import { Hud } from "../components/ui";
 import { Robot, type RobotPose } from "../components/Robot";
 import { blip } from "../lib/sound";
-import { speak } from "../lib/speech";
 import { useSession } from "../state/sessionStore";
 
 type Phase = "look" | "number" | "close";
@@ -33,14 +32,19 @@ export function Mission3() {
     if (phase === "number") session.finishMission(3);
   }, [phase]);
 
-  const repeat = () => speak(say, session.persisted.narration);
   const hint = () => setHinted(true);
 
   return (
     <section className={`play story-play guide-play${phase !== "look" ? " is-talk" : ""}`}>
-      <Hud title="Mirar y decidir" onRepeat={repeat} onHint={phase === "look" ? hint : undefined} />
+      <Hud title="Mirar y decidir" onHint={phase === "look" ? hint : undefined} />
       <div className="story-layout">
-        <Robot pose={pose} say={phase === "look" && !picked ? say : say} bubble={phase === "number" || phase === "close"} fresh={phase === "number" ? number : undefined} />
+        <Robot
+          pose={pose}
+          say={say}
+          bubble={phase === "number" || phase === "close"}
+          fresh={phase === "number" ? number : undefined}
+          onTap={phase === "number" ? () => setPhase("close") : phase === "close" ? () => session.setScreen("P06") : phase === "look" && picked ? () => setPhase("number") : undefined}
+        />
         {phase === "look" ? (
           <div className="dossier">
             {older && (

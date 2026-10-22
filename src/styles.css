@@ -881,7 +881,10 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .case-play.phase-open .robot-guide { left: 1%; bottom: 4%; width: min(200px, 22cqw); align-items: flex-start; }
 .case-play.phase-open .robot-say { max-width: min(250px, 28cqw); text-align: left; }
 .case-play.phase-open .open-stage { padding-left: 16%; }
-.case-play.phase-story .robot-guide { left: 2%; bottom: 10%; width: min(160px, 18cqw); }
+.case-play.phase-story .robot-guide { left: 1%; bottom: 18%; width: min(250px, 28cqw); }
+.case-play.phase-story .robot-stack,
+.case-play.phase-story .robot-body,
+.case-play.phase-story .robot-body img { width: min(250px, 28cqw); height: auto; }
 .case-play.phase-story .robot-say { display: none; }
 .case-play.phase-questions:not(.is-reply):not(.is-bridge) .robot-guide {
   left: 1%; right: auto; top: auto; bottom: 6%;
@@ -915,14 +918,17 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .book-open-hit { border: 0; background: transparent; padding: 0; cursor: pointer; width: min(88%, 860px); }
 .book-open-hit img { width: 100%; height: auto; display: block; }
 .case-play.is-talk .robot-guide {
-  left: 50%; bottom: 5%; width: min(300px, 34cqw); translate: -50% 0; align-items: center;
+  left: 50%; bottom: 16%; width: min(560px, 58cqw); translate: -50% 0; align-items: center;
 }
+.case-play.is-talk .robot-stack,
+.case-play.is-talk .robot-body,
+.case-play.is-talk .robot-body img { width: min(560px, 58cqw); height: auto; }
 .case-play.is-bridge .robot-guide {
-  left: 50%; bottom: 4%; width: min(480px, 52cqw); translate: -50% 0; align-items: center;
+  left: 50%; bottom: 14%; width: min(560px, 58cqw); translate: -50% 0; align-items: center;
 }
 .case-play.is-bridge .robot-stack,
 .case-play.is-bridge .robot-body,
-.case-play.is-bridge .robot-body img { width: min(420px, 46cqw); height: auto; animation: none; }
+.case-play.is-bridge .robot-body img { width: min(560px, 58cqw); height: auto; animation: none; }
 .case-play.is-talk .robot-say { max-width: min(540px, 72cqw); text-align: center; }
 .case-play .thought, .guide-play .thought { left: 100%; right: auto; top: 4%; translate: 10px 0; }
 .case-play .story-stage,
@@ -1000,8 +1006,11 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .case-play.is-talk .reply-stage,
 .case-play.is-talk .number-stage { padding: 4% 8% 30%; }
 .guide-play.is-talk .robot-guide {
-  left: 50%; bottom: 4%; width: min(280px, 32cqw); translate: -50% 0; align-items: center;
+  left: 50%; bottom: 14%; width: min(520px, 54cqw); translate: -50% 0; align-items: center;
 }
+.guide-play.is-talk .robot-stack,
+.guide-play.is-talk .robot-body,
+.guide-play.is-talk .robot-body img { width: min(520px, 54cqw); height: auto; }
 .guide-play.is-talk .robot-say { max-width: min(520px, 68cqw); text-align: center; }
 .guide-play.is-talk .riddle { display: none; }
 .guide-play.is-talk .dossier { padding-bottom: 32%; justify-content: flex-start; }
