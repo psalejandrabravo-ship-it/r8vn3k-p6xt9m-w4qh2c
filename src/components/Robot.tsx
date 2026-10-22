@@ -20,12 +20,14 @@ export function Robot({
   bubble = false,
   fresh,
   className = "",
+  onTap,
 }: {
   pose: RobotPose;
   say?: string;
   bubble?: boolean;
   fresh?: number;
   className?: string;
+  onTap?: () => void;
 }) {
   const session = useSession();
   const [nudged, setNudged] = useState(false);
@@ -44,6 +46,7 @@ export function Robot({
           className="robot-body"
           aria-label="Robot guía"
           onClick={() => {
+            onTap?.();
             if (reduce) return;
             setNudged(true);
             window.setTimeout(() => setNudged(false), 420);

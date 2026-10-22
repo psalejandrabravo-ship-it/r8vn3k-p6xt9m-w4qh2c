@@ -8,11 +8,12 @@ import type { MissionId } from "../config/gameConfig";
 
 const VIDEO = "https://videos.mirarim.com/Videos%20en%20juegos/Introduccion%20maletin%20secreto.mp4";
 
-const PINS: { id: MissionId; label: string; x: string; y: string }[] = [
-  { id: 1, label: "Misión 01", x: "28%", y: "34%" },
-  { id: 2, label: "Misión 02", x: "70%", y: "32%" },
-  { id: 3, label: "Misión 03", x: "26%", y: "56%" },
+const PINS: { id: MissionId; label: string; x: number; y: number }[] = [
+  { id: 1, label: "Misión 1", x: 34, y: 30 },
+  { id: 2, label: "Misión 2", x: 66, y: 32 },
+  { id: 3, label: "Misión 3", x: 36, y: 66 },
 ];
+const CASE = { x: 50, y: 48 };
 
 function unlocked(id: MissionId | "case", missions: Record<MissionId, string>) {
   const done = (mission: MissionId) => missions[mission] === "completed" || missions[mission] === "skipped";
@@ -128,14 +129,19 @@ export function MapScreen() {
       <div className="board">
         <img src="/assets/map/tablero.jpg" alt="Tablero de corcho" />
         <h2 className="map-title">Mapa de misiones</h2>
+        <svg className="strings" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          {(missions[1] === "completed" || missions[1] === "skipped") && <path d="M34 30 Q 50 22 66 32" />}
+          {(missions[2] === "completed" || missions[2] === "skipped") && <path d="M66 32 Q 72 50 36 66" />}
+          {(missions[3] === "completed" || missions[3] === "skipped") && <path d="M36 66 Q 44 56 50 48" />}
+        </svg>
         {PINS.map((pin) => {
           const open = unlocked(pin.id, missions);
           return (
             <button
               key={pin.id}
               type="button"
-              className={`pin mark pop status-${missions[pin.id]}${next === pin.id ? " is-next" : ""}${open ? "" : " is-locked"}${parseFloat(pin.x) > 50 ? " flip" : ""}`}
-              style={{ left: pin.x, top: pin.y }}
+              className={`pin mark pop status-${missions[pin.id]}${next === pin.id ? " is-next" : ""}${open ? "" : " is-locked"}`}
+              style={{ left: `${pin.x}%`, top: `${pin.y}%` }}
               disabled={!open}
               aria-label={`${pin.label}. ${open ? statusLabel(missions[pin.id]) : "Todavía no"}`}
               onClick={() => openMission(pin.id)}
@@ -148,7 +154,7 @@ export function MapScreen() {
         <button
           type="button"
           className={`pin mark case pop${unlocked("case", missions) ? " ready" : " is-locked"}`}
-          style={{ left: "74%", top: "54%" }}
+          style={{ left: `${CASE.x}%`, top: `${CASE.y}%` }}
           disabled={!unlocked("case", missions)}
           aria-label={unlocked("case", missions) ? "Abrir el maletín" : "El maletín espera los tres números"}
           onClick={() => session.setScreen("P23")}

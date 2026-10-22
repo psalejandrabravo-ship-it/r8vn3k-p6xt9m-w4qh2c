@@ -392,7 +392,7 @@ body.reduce .breath, body.reduce .prop-door { animation: none; transition: none;
   pointer-events: none; border-radius: 0 0 8px 8px;
 }
 .strings { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.strings path { fill: none; stroke: #c45b4a; stroke-width: 0.7; stroke-linecap: round; }
+.strings path { fill: none; stroke: #d12b2b; stroke-width: 1.15; stroke-linecap: round; }
 .pin {
   position: absolute; translate: -50% -50%;
   min-width: 120px; max-width: 36%; padding: 8px 10px;
@@ -444,8 +444,8 @@ body.reduce .walker, body.reduce .walker img, body.reduce .companion img { anima
 .intro-card h1 { color: var(--cream); }
 .play {
   display: flex; flex-direction: column; gap: 8px; padding: 12px;
-  background: radial-gradient(ellipse at 50% 110%, rgba(230, 184, 76, 0.2), transparent 46%), linear-gradient(180deg, #2b2155, #241c16 55%);
-  color: var(--cream);
+  background: #f4ead8 url("/assets/ui/papel.jpg") center / cover no-repeat;
+  color: var(--indigo);
 }
 .hud { display: flex; align-items: center; gap: 10px; min-height: var(--tap); }
 .hud strong, .hud small { display: block; }
@@ -624,24 +624,22 @@ body.reduce .flip.open .flip-back { transform: none; }
 
 .pin.mark, .pin.mark.status-completed, .pin.mark.status-exploring, .pin.mark.is-next, .pin.mark.ready {
   background: transparent; border: 0; box-shadow: none; outline: none;
-  min-width: 96px; width: 96px; height: 96px; padding: 0; overflow: visible;
+  width: auto; height: auto; min-width: 0; padding: 0; overflow: visible;
   align-items: center; justify-content: center;
 }
-.pin.mark .ring {
-  box-sizing: border-box;
-  width: 104px; height: 104px; border-radius: 50%; border: 8px solid #ef7d32;
+.pin.mark .ring { display: none; }
+.pin.mark.is-next .ring, .pin.mark.ready .ring {
+  display: block; position: absolute; inset: -14px -18px;
+  width: auto; height: auto; border-radius: 999px; border: 7px solid #ef7d32;
   box-shadow: 0 0 0 4px rgba(239, 125, 50, 0.28);
-  display: block;
 }
-.pin.mark.is-next .ring { border-width: 9px; }
-.pin.mark .stamp {
-  position: absolute; left: 108px; top: 50%; translate: 0 -50%;
-  margin: 0; padding: 6px 12px; background: #f7f1e4; color: #161616;
-  font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase;
-  font-size: 1.2rem; white-space: nowrap; rotate: -2deg;
+.pin.mark .stamp, .pin.mark.flip .stamp, .pin.mark.case .stamp {
+  position: relative; left: auto; right: auto; top: auto; translate: none; rotate: 0deg;
+  margin: 0; padding: 8px 14px; background: #f7f1e4; color: #161616;
+  font-weight: 900; letter-spacing: 0; text-transform: none;
+  font-size: 1.35rem; white-space: nowrap;
   box-shadow: 2px 3px 0 rgba(22, 22, 22, 0.28);
 }
-.pin.mark.flip .stamp, .pin.mark.case .stamp { left: auto; right: 108px; }
 .clue-note.ready strong { background: var(--coral); color: white; border-color: var(--coral); }
 .walker > span:not(.carried) { margin-top: -8px; }
 .walker .carried, .companion .carried {
@@ -718,7 +716,7 @@ body.reduce .flip.open .flip-back { transform: none; }
 .story-layout .robot-guide { display: contents; }
 .story-layout .robot-say { grid-column: 1 / -1; grid-row: 1; margin: 0; }
 .story-layout .robot-stack { grid-column: 1; grid-row: 2; align-self: end; position: relative; }
-.hud .row { margin-left: auto; }
+.hud .row { margin-left: auto; padding-right: 64px; }
 .learn-board { max-height: none; overflow: auto; }
 .story-layout .book,
 .story-layout .dossier,
@@ -876,11 +874,13 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .case-play.phase-story .robot-say { display: none; }
 .case-play.phase-questions:not(.is-reply):not(.is-bridge) .robot-guide { left: 0; bottom: 0; width: 100px; }
 .case-play.phase-questions:not(.is-reply):not(.is-bridge) .robot-say { display: none; }
-.case-play.is-bridge .robot-guide,
 .case-play.is-reply .robot-guide,
 .case-play.phase-number .robot-guide,
 .case-play.phase-close .robot-guide { left: 2%; bottom: 4%; width: min(320px, 34cqw); }
-.case-play .thought { left: auto; right: 0; top: 12%; translate: 55% 0; }
+.case-play.is-bridge .robot-guide {
+  left: 50%; bottom: 8%; width: min(420px, 46cqw); translate: -50% 0; align-items: center;
+}
+.case-play .thought, .guide-play .thought { left: 100%; right: auto; top: 4%; translate: 10px 0; }
 .case-play .story-stage,
 .case-play .case-ask {
   position: relative; z-index: 1; height: 100%; min-height: 0;
@@ -889,7 +889,7 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .case-play .reading { margin: 0; max-width: 46rem; text-align: center; font-weight: 800; white-space: pre-line; line-height: 1.35; }
 .case-play .book-nav {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  width: min(100%, 1000px); color: #fffaf3; font-weight: 800; position: relative; z-index: 5;
+  width: min(100%, 1000px); color: #2b2155; font-weight: 800; position: relative; z-index: 5;
 }
 .case-play .open-stage { align-items: flex-end; justify-content: flex-end; padding: 0 8% 12% 46%; }
 .case-play .spread { width: min(100%, 1080px); height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
@@ -903,7 +903,7 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .case-play .book-pic { width: 100%; max-height: 50cqh; object-fit: contain; }
 .case-play .intro-book { width: min(100%, 460px); max-height: 32cqh; }
 .case-play .reading.in-book {
-  position: absolute; left: 16%; right: 16%; bottom: 36%; z-index: 3;
+  position: absolute; left: 16%; right: 16%; bottom: 44%; z-index: 3;
   color: #161616; text-shadow: none; font-size: clamp(0.95rem, 1.7cqw, 1.15rem);
   pointer-events: none;
 }
@@ -915,11 +915,20 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .case-play .book-wrap .page-hit.right { right: 0; }
 .case-play .book-nav { position: relative; z-index: 5; }
 .case-play .case-ask {
-  background: transparent; color: #fffaf3; border-radius: 0; box-shadow: none;
+  background: transparent; color: #2b2155; border-radius: 0; box-shadow: none;
   justify-content: center; padding: 8px 16px 8px 120px; overflow: hidden;
 }
-.case-play .reading.ask { color: #fffaf3; font-size: clamp(1.15rem, 2.4cqw, 1.6rem); }
-.case-play .hint-line { color: #fffaf3; }
+.case-play .reading.ask, .case-play .hint-line, .case-play .tap-legend { color: #2b2155; }
+.case-play .reading.ask { font-size: clamp(1.15rem, 2.4cqw, 1.6rem); }
+.case-play .tap-legend { margin: 0; font-weight: 800; text-align: center; }
+.advance-arrow {
+  position: absolute; right: 7%; top: 46%; translate: 0 -50%;
+  width: 76px; height: 76px; border: 0; border-radius: 50%;
+  background: var(--coral); color: white; padding: 16px;
+  box-shadow: 0 6px 0 rgba(43, 33, 85, 0.18);
+}
+.advance-arrow svg { width: 100%; height: 100%; }
+.case-play.is-bridge .case-ask { padding: 0; }
 .case-play .support { width: min(280px, 36%); max-height: 28cqh; }
 .case-play .visual-choices { width: min(720px, 100%); }
 .case-play .visual-choices .choice { min-height: 64px; font-size: 1.12rem; }
@@ -937,7 +946,14 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .case-play .reply-art { width: min(78%, 640px); max-height: 56cqh; object-fit: contain; filter: drop-shadow(0 16px 12px rgba(20, 12, 28, 0.35)); }
 .case-play.is-reply .robot-say,
 .case-play.is-bridge .robot-say { max-width: min(300px, 36cqw); }
-.case-play .found-number { color: #fffaf3; text-shadow: 0 6px 0 rgba(43, 33, 85, 0.35); }
+.case-play .found-number { color: #c45b4a; text-shadow: none; }
+.guide-play .thought { left: 100%; right: auto; top: 4%; translate: 10px 0; }
+.guide-play .dossier,
+.guide-play .learn-board {
+  height: 100%; margin: 0;
+  background: transparent;
+  color: var(--indigo);
+}
 .guide-play .story-layout { display: block; position: relative; }
 .guide-play .robot-guide {
   display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end;
@@ -955,13 +971,6 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .guide-play .robot-say::after {
   content: ""; position: absolute; left: 28px; bottom: -12px;
   border: 8px solid transparent; border-top-color: #fffaf3;
-}
-.guide-play .thought { left: auto; right: 0; top: 10%; translate: 50% 0; }
-.guide-play .dossier,
-.guide-play .learn-board {
-  height: 100%; margin-left: min(240px, 28cqw);
-  background: #fffaf3 url("/assets/ui/papel.jpg") center / cover no-repeat;
-  color: var(--indigo);
 }
 .guide-play .calm-note img,
 .guide-play .support { width: min(460px, 62%); max-height: 42cqh; object-fit: contain; }

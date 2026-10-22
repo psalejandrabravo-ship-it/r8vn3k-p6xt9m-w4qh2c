@@ -96,7 +96,13 @@ export function Mission1() {
     <section className={`play story-play case-play phase-${phase}${reply ? " is-reply" : ""}${phase === "questions" && !bridged ? " is-bridge" : ""}`}>
       <Hud title={STORY_TITLE} onRepeat={repeat} onHint={phase === "questions" && bridged && !reply ? () => { setHint(question.hint); speak(question.hint, narration); } : undefined} />
       <div className="story-layout">
-        <Robot pose={pose} say={say} bubble={phase === "number" || phase === "close"} fresh={phase === "number" ? number : undefined} />
+        <Robot
+          pose={pose}
+          say={say}
+          bubble={phase === "number" || phase === "close"}
+          fresh={phase === "number" ? number : undefined}
+          onTap={phase === "questions" && bridged && !reply ? () => { setHint(question.hint); speak(question.hint, narration); } : undefined}
+        />
         {phase === "open" && (
           <div className="story-stage open-stage">
             <img className="book-pic intro-book" src={BOOK_OPEN} alt="" />
@@ -134,7 +140,9 @@ export function Mission1() {
         {phase === "questions" && (
           <div className="case-ask">
             {!bridged ? (
-              <button type="button" className="btn" onClick={() => setBridged(true)}>Seguir</button>
+              <button type="button" className="advance-arrow" aria-label="Seguir" onClick={() => setBridged(true)}>
+                <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 10 L34 24 L16 38" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </button>
             ) : reply ? (
               <div className="reply-stage">
                 {replyArt && <img className="reply-art" src={replyArt} alt="" />}
@@ -170,6 +178,7 @@ export function Mission1() {
                     ))}
                   </div>
                 )}
+                <p className="tap-legend">Toca al robot para obtener una pista.</p>
               </>
             )}
           </div>

@@ -97,7 +97,7 @@ export const QUESTIONS: Record<Level, CaseQuestion[]> = {
   exploradores: [
     {
       prompt: "¿Cómo se sintió cuando se cayó la torre?",
-      hint: "Vuelve a mirar su cara y sus manos.",
+      hint: "Apretó las manos y tenía la cara caliente.",
       support: "/assets/story/pagina-4.png",
       options: [
         { id: "enojo", label: "Enojado o frustrado.", reply: "Sí. Quería que la torre resultara y se cayó. Eso puede causar enojo o frustración.", next: "continue" },
@@ -122,12 +122,12 @@ export const QUESTIONS: Record<Level, CaseQuestion[]> = {
   detectives: [
     {
       prompt: "¿Cómo se sintió el personaje y qué pistas del cuento te ayudan a saberlo?",
-      hint: "Fíjate en el cuerpo y en lo que no resultó.",
+      hint: "Apretó las manos y tenía la cara caliente.",
       support: "/assets/story/pagina-4.png",
       options: [
-        { id: "enojo", label: "Enojado o frustrado: apretó las manos y tenía la cara caliente.", reply: "Las pistas nos ayudan a comprender cómo podría sentirse. Había trabajado mucho y la torre no resultó como esperaba.", next: "continue" },
-        { id: "contento", label: "Contento, porque la torre quedó terminada.", reply: "Miremos otra vez las pistas: las manos, la cara y lo que pasó con la torre.", next: "retry" },
-        { id: "tranquilo", label: "Tranquilo, porque no le importaba.", reply: "Miremos otra vez las pistas: las manos, la cara y lo que pasó con la torre.", next: "retry" },
+        { id: "enojo", label: "Enojado o frustrado.", reply: "Las pistas nos ayudan a comprender cómo podría sentirse. Había trabajado mucho y la torre no resultó como esperaba.", next: "continue" },
+        { id: "contento", label: "Contento.", reply: "Miremos otra vez las pistas: las manos, la cara y lo que pasó con la torre.", next: "retry" },
+        { id: "tranquilo", label: "Tranquilo.", reply: "Miremos otra vez las pistas: las manos, la cara y lo que pasó con la torre.", next: "retry" },
       ],
     },
     {
