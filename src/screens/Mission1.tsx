@@ -67,7 +67,10 @@ export function Mission1() {
     : phase === "close" ? "acompañando"
     : "señalando";
 
-  const say = phase === "open" ? OPEN_CASE
+  const asking = phase === "questions" && bridged && !reply;
+  const talking = phase === "number" || phase === "close" || (phase === "questions" && (!bridged || Boolean(reply)));
+  const say = asking && hint ? hint
+    : phase === "open" ? OPEN_CASE
     : phase === "questions" && !bridged ? CASE_BRIDGE
     : phase === "questions" && reply ? reply
     : phase === "number" ? NUMBER_LINE
@@ -93,15 +96,15 @@ export function Mission1() {
   const replyArt = pickedOption?.image || question.support;
 
   return (
-    <section className={`play story-play case-play phase-${phase}${reply ? " is-reply" : ""}${phase === "questions" && !bridged ? " is-bridge" : ""}`}>
-      <Hud title={STORY_TITLE} onRepeat={repeat} onHint={phase === "questions" && bridged && !reply ? () => { setHint(question.hint); speak(question.hint, narration); } : undefined} />
+    <section className={`play story-play case-play phase-${phase}${reply ? " is-reply" : ""}${phase === "questions" && !bridged ? " is-bridge" : ""}${talking ? " is-talk" : ""}${hint ? " has-hint" : ""}`}>
+      <Hud title={STORY_TITLE} onRepeat={repeat} onHint={asking ? () => setHint(question.hint) : undefined} />
       <div className="story-layout">
         <Robot
           pose={pose}
           say={say}
           bubble={phase === "number" || phase === "close"}
           fresh={phase === "number" ? number : undefined}
-          onTap={phase === "questions" && bridged && !reply ? () => { setHint(question.hint); speak(question.hint, narration); } : undefined}
+          onTap={asking ? () => setHint(question.hint) : undefined}
         />
         {phase === "open" && (
           <div className="story-stage open-stage">
@@ -146,19 +149,23 @@ export function Mission1() {
             ) : reply ? (
               <div className="reply-stage">
                 {replyArt && <img className="reply-art" src={replyArt} alt="" />}
-                <button type="button" className="btn" onClick={() => {
-                  if (replyNext === "retry") { setReply(null); setPicked(null); return; }
-                  if (replyNext === "number" || qIndex + 1 >= questions.length) { setPhase("number"); return; }
-                  setQIndex(qIndex + 1);
-                  setReply(null);
-                  setPicked(null);
-                  setHint(null);
-                }}>{replyNext === "retry" ? "Elegir otra opción" : "Seguir"}</button>
+                {replyNext === "retry" ? (
+                  <button type="button" className="btn" onClick={() => { setReply(null); setPicked(null); setHint(null); }}>Elegir otra opción</button>
+                ) : (
+                  <button type="button" className="advance-arrow" aria-label="Seguir" onClick={() => {
+                    if (replyNext === "number" || qIndex + 1 >= questions.length) { setPhase("number"); return; }
+                    setQIndex(qIndex + 1);
+                    setReply(null);
+                    setPicked(null);
+                    setHint(null);
+                  }}>
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 10 L34 24 L16 38" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </button>
+                )}
               </div>
             ) : (
               <>
                 <p className="reading ask">{question.prompt}</p>
-                {hint && <p className="hint-line">{hint}</p>}
                 {question.support && !question.options.some((option) => option.image) && <img className="support" src={question.support} alt="" />}
                 {question.options.some((option) => option.image) ? (
                   <div className="action-cards">
@@ -186,12 +193,14 @@ export function Mission1() {
         {phase === "number" && (
           <div className="case-ask number-stage">
             <p className="found-number">{number}</p>
-            <button type="button" className="btn" onClick={() => setPhase("close")}>Seguir</button>
+            <button type="button" className="advance-arrow" aria-label="Seguir" onClick={() => setPhase("close")}>
+              <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 10 L34 24 L16 38" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </button>
           </div>
         )}
         {phase === "close" && (
           <div className="case-ask number-stage">
-            <button type="button" className="btn" onClick={() => session.setScreen("P06")}>Volver al mapa</button>
+            <button type="button" className="btn map-return" onClick={() => session.setScreen("P06")}>Volver al mapa</button>
           </div>
         )}
       </div>

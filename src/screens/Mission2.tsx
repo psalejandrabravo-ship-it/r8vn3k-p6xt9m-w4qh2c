@@ -19,8 +19,9 @@ export function Mission2() {
   const learned = riddleSolved || doorOpen;
   const [phase, setPhase] = useState<Phase>(done ? "close" : learned ? "ways" : "word");
   const [note, setNote] = useState(CALM_INTRO);
+  const [waysHint, setWaysHint] = useState<string | null>(null);
   const number = clueByMission(2).number;
-  const say = phase === "word" ? note : phase === "explain" ? CALM_NOTE : phase === "ways" ? "¿Qué puedo hacer para encontrar la calma?" : phase === "number" ? `El segundo número es ${number}. Yo lo recuerdo.` : CLOSE_2;
+  const say = phase === "word" ? note : phase === "explain" ? CALM_NOTE : phase === "ways" ? waysHint ?? undefined : phase === "number" ? `El segundo número es ${number}. Yo lo recuerdo.` : CLOSE_2;
   const pose: RobotPose = phase === "number" ? "descubrimiento" : note !== CALM_INTRO && phase === "word" ? "acompañando" : "pensando";
 
   useEffect(() => {
@@ -33,14 +34,14 @@ export function Mission2() {
     setNote(CALM_NOTE);
     blip(session.persisted.sounds);
   };
-  const repeat = () => speak(say, session.persisted.narration);
+  const repeat = () => { if (say) speak(say, session.persisted.narration); };
   const hint = () => {
     if (phase === "word") setNote(CALM_HINT);
-    if (phase === "ways") setNote("No hay una sola forma. Puedes mirar otra posibilidad.");
+    if (phase === "ways") setWaysHint("No hay una sola forma. Puedes mirar otra posibilidad.");
   };
 
   return (
-    <section className="play story-play guide-play">
+    <section className={`play story-play guide-play${phase === "explain" || phase === "number" || phase === "close" ? " is-talk" : ""}`}>
       <Hud title="Detenerse y buscar la calma" onRepeat={repeat} onHint={phase === "word" || phase === "ways" ? hint : undefined} />
       <div className="story-layout">
         <Robot pose={pose} say={say} bubble={phase === "number" || phase === "close"} fresh={phase === "number" ? number : undefined} />
@@ -49,18 +50,20 @@ export function Mission2() {
         ) : phase === "explain" ? (
           <div className="dossier calm-note">
             <img src="/assets/illustrations/cards/calma.jpg" alt="" />
-            <p className="riddle">{CALM_NOTE}</p>
-            <button type="button" className="btn" onClick={() => setPhase("ways")}>Ver formas de calma</button>
+            <button type="button" className="advance-arrow" aria-label="Ver formas de calma" onClick={() => setPhase("ways")}>
+              <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 10 L34 24 L16 38" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </button>
           </div>
         ) : phase === "number" ? (
           <div className="dossier calm-note">
-            <p className="riddle">El número {number} queda en la burbuja del robot.</p>
-            <button type="button" className="btn" onClick={() => setPhase("close")}>Seguir</button>
+            <p className="found-number">{number}</p>
+            <button type="button" className="advance-arrow" aria-label="Seguir" onClick={() => setPhase("close")}>
+              <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 10 L34 24 L16 38" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </button>
           </div>
         ) : phase === "close" ? (
           <div className="dossier calm-note">
-            <p className="riddle">{CLOSE_2}</p>
-            <button type="button" className="btn" onClick={() => session.setScreen("P06")}>Volver al mapa</button>
+            <button type="button" className="btn map-return" onClick={() => session.setScreen("P06")}>Volver al mapa</button>
           </div>
         ) : (
           <div className="dossier">

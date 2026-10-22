@@ -16,7 +16,6 @@ export function Mission3() {
   const [phase, setPhase] = useState<Phase>(done ? "close" : "look");
   const [picked, setPicked] = useState<string | null>(null);
   const [hinted, setHinted] = useState(false);
-  const [seen, setSeen] = useState<string[]>([]);
   const number = clueByMission(3).number;
   const choice = TOWER_OPTIONS.find((item) => item.id === picked);
   const say = phase === "number"
@@ -38,7 +37,7 @@ export function Mission3() {
   const hint = () => setHinted(true);
 
   return (
-    <section className="play story-play guide-play">
+    <section className={`play story-play guide-play${phase !== "look" ? " is-talk" : ""}`}>
       <Hud title="Mirar y decidir" onRepeat={repeat} onHint={phase === "look" ? hint : undefined} />
       <div className="story-layout">
         <Robot pose={pose} say={phase === "look" && !picked ? say : say} bubble={phase === "number" || phase === "close"} fresh={phase === "number" ? number : undefined} />
@@ -65,7 +64,6 @@ export function Mission3() {
                   onClick={() => {
                     setPicked(option.id);
                     setHinted(false);
-                    setSeen((prev) => prev.includes(option.id) ? prev : [...prev, option.id]);
                     blip(session.persisted.sounds);
                   }}
                 >
@@ -76,19 +74,20 @@ export function Mission3() {
               ))}
             </div>
             {picked && <p>{choice?.text} No es la única manera.</p>}
-            <button type="button" className="btn" disabled={!picked} onClick={() => setPhase("number")}>
-              {seen.length > 1 ? "Seguir" : "Elegir esta y seguir"}
+            <button type="button" className="advance-arrow" aria-label="Seguir" disabled={!picked} onClick={() => setPhase("number")}>
+              <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 10 L34 24 L16 38" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
           </div>
         ) : phase === "number" ? (
           <div className="dossier calm-note">
-            <p className="riddle">El número {number} queda en la burbuja del robot.</p>
-            <button type="button" className="btn" onClick={() => setPhase("close")}>Seguir</button>
+            <p className="found-number">{number}</p>
+            <button type="button" className="advance-arrow" aria-label="Seguir" onClick={() => setPhase("close")}>
+              <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 10 L34 24 L16 38" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </button>
           </div>
         ) : (
           <div className="dossier calm-note">
-            <p className="riddle">{CLOSE_3}</p>
-            <button type="button" className="btn" onClick={() => session.setScreen("P06")}>Volver al mapa</button>
+            <button type="button" className="btn map-return" onClick={() => session.setScreen("P06")}>Volver al mapa</button>
           </div>
         )}
       </div>

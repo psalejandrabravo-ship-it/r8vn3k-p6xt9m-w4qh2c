@@ -24,7 +24,6 @@ export function CalmLearn({
   const [open, setOpen] = useState<string[]>([]);
   const [focus, setFocus] = useState<string | null>(null);
   const card = CARDS.find((item) => item.id === focus);
-  const seenAll = open.length >= CARDS.length;
   const showNote = revealed || open.length >= 3;
   useEffect(() => {
     session.setFeedback("");
@@ -67,8 +66,8 @@ export function CalmLearn({
         })}
       </div>
       {showNote && (
-        <button type="button" className="btn" onClick={onContinue}>
-          {seenAll || revealed ? "Seguir" : "Seguir"}
+        <button type="button" className="advance-arrow" aria-label="Seguir" onClick={onContinue}>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 10 L34 24 L16 38" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </button>
       )}
     </div>
