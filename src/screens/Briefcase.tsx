@@ -19,7 +19,7 @@ export function Briefcase() {
     session.setScreen("P28");
   };
   return (
-    <section className="play story-play">
+    <section className="play story-play guide-play">
       <Hud title="El maletín" />
       <div className="story-layout">
         <Robot

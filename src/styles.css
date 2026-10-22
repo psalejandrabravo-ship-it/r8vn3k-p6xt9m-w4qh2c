@@ -348,32 +348,32 @@ body.reduce .breath, body.reduce .prop-door { animation: none; transition: none;
 .cover-frame { aspect-ratio: 1712 / 1152; width: min(100cqw, calc(100cqh * 1712 / 1152)); }
 .cover-frame .cover-art, .board > img { position: static; width: 100%; height: 100%; object-fit: fill; border-radius: 8px; }
 .brand-logo {
-  position: absolute; top: 4%; left: 50%; translate: -50% 0;
-  height: 8%; width: auto; max-width: 42%;
-  filter: drop-shadow(0 2px 0 rgba(255,250,243,0.9));
+  position: absolute; top: auto; bottom: 5%; left: 3%; translate: none;
+  height: 7%; width: auto; max-width: 28%;
+  filter: drop-shadow(0 2px 0 rgba(255,250,243,0.95));
 }
 .brand-logo.end { position: static; translate: none; height: 42px; max-width: 220px; filter: none; }
 .cover-copy {
   position: absolute; inset: 0;
-  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-  padding: 0 8% 3.2%;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  padding: 4% 8% 0;
   gap: 8px;
   text-align: center;
 }
 .cover-titles { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .cover-copy h1 {
-  font-size: clamp(1.45rem, 3.6cqw, 2.3rem);
+  font-size: clamp(1.6rem, 4cqw, 2.6rem);
   margin: 0;
-  color: #fffaf3;
-  text-shadow: 0 2px 10px rgba(36, 28, 22, 0.55);
+  color: #2b2155;
+  text-shadow: 0 1px 0 #fffaf3, 0 0 14px #fffaf3;
 }
 .cover-copy .sub {
-  color: #fffaf3;
+  color: #c45b4a;
   background: none;
   border-radius: 0;
   padding: 0;
   font-weight: 800;
-  text-shadow: 0 2px 8px rgba(36, 28, 22, 0.55);
+  text-shadow: 0 1px 0 #fffaf3;
   margin: 0;
   box-shadow: none;
 }
@@ -859,7 +859,7 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .case-play .robot-body { pointer-events: auto; }
 .case-play .robot-body img { width: 100%; height: auto; animation: bob 2.8s ease-in-out infinite; }
 .case-play .robot-say {
-  position: relative; margin: 0 0 10px; max-width: min(420px, 70cqw);
+  position: relative; margin: 0 0 36px; max-width: min(420px, 70cqw);
   background: #fffaf3; color: #2b2155; border-radius: 18px; padding: 12px 14px;
   font-weight: 800; line-height: 1.35; text-align: left;
   box-shadow: 0 6px 0 rgba(43, 33, 85, 0.16);
@@ -879,7 +879,8 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .case-play.is-bridge .robot-guide,
 .case-play.is-reply .robot-guide,
 .case-play.phase-number .robot-guide,
-.case-play.phase-close .robot-guide { left: 4%; bottom: 8%; width: min(250px, 28cqw); }
+.case-play.phase-close .robot-guide { left: 2%; bottom: 4%; width: min(320px, 34cqw); }
+.case-play .thought { left: auto; right: 0; top: 12%; translate: 55% 0; }
 .case-play .story-stage,
 .case-play .case-ask {
   position: relative; z-index: 1; height: 100%; min-height: 0;
@@ -902,8 +903,8 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .case-play .book-pic { width: 100%; max-height: 50cqh; object-fit: contain; }
 .case-play .intro-book { width: min(100%, 460px); max-height: 32cqh; }
 .case-play .reading.in-book {
-  position: absolute; left: 12%; right: 12%; bottom: 14%; z-index: 3;
-  color: #161616; text-shadow: none; font-size: clamp(0.95rem, 1.8cqw, 1.2rem);
+  position: absolute; left: 16%; right: 16%; bottom: 36%; z-index: 3;
+  color: #161616; text-shadow: none; font-size: clamp(0.95rem, 1.7cqw, 1.15rem);
   pointer-events: none;
 }
 .case-play .book-wrap .page-hit {
@@ -937,8 +938,36 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .case-play.is-reply .robot-say,
 .case-play.is-bridge .robot-say { max-width: min(300px, 36cqw); }
 .case-play .found-number { color: #fffaf3; text-shadow: 0 6px 0 rgba(43, 33, 85, 0.35); }
-body.reduce .case-play .robot-guide,
-body.reduce .case-play .robot-body img { transition: none; animation: none; }
+.guide-play .story-layout { display: block; position: relative; }
+.guide-play .robot-guide {
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end;
+  position: absolute; z-index: 6; left: 1%; bottom: 2%; width: min(230px, 26cqw);
+  pointer-events: none;
+}
+.guide-play .robot-body { pointer-events: auto; }
+.guide-play .robot-body img { width: 100%; height: auto; }
+.guide-play .robot-say {
+  position: relative; margin: 0 0 28px; max-width: min(340px, 46cqw);
+  background: #fffaf3; color: #2b2155; border-radius: 18px; padding: 12px 14px;
+  font-weight: 800; line-height: 1.35; text-align: left;
+  box-shadow: 0 6px 0 rgba(43, 33, 85, 0.16);
+}
+.guide-play .robot-say::after {
+  content: ""; position: absolute; left: 28px; bottom: -12px;
+  border: 8px solid transparent; border-top-color: #fffaf3;
+}
+.guide-play .thought { left: auto; right: 0; top: 10%; translate: 50% 0; }
+.guide-play .dossier,
+.guide-play .learn-board {
+  height: 100%; margin-left: min(240px, 28cqw);
+  background: #fffaf3 url("/assets/ui/papel.jpg") center / cover no-repeat;
+  color: var(--indigo);
+}
+.guide-play .calm-note img,
+.guide-play .support { width: min(460px, 62%); max-height: 42cqh; object-fit: contain; }
+.guide-play .dossier { justify-content: center; }
+.guide-play .vchoice img { width: 148px; height: 124px; object-fit: cover; }
+body.reduce .guide-play .robot-guide { transition: none; }
 @media (max-width: 800px) {
   .case-play .action-cards { grid-template-columns: 1fr; }
   .case-play.phase-open .robot-guide { width: 140px; left: 8%; }

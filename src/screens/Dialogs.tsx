@@ -81,6 +81,7 @@ function Config() {
           <button type="button" className="choice" onClick={() => { session.openDialog(null); session.setScreen("P29"); }}>Terminar por hoy</button>
         </details>
       )}
+      <button type="button" className="btn quiet" onClick={() => session.newVisit()}>Reiniciar el juego</button>
       <button type="button" className="btn" onClick={() => session.openDialog(null)}>Listo</button>
     </>
   );

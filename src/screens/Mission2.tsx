@@ -40,7 +40,7 @@ export function Mission2() {
   };
 
   return (
-    <section className="play story-play">
+    <section className="play story-play guide-play">
       <Hud title="Detenerse y buscar la calma" onRepeat={repeat} onHint={phase === "word" || phase === "ways" ? hint : undefined} />
       <div className="story-layout">
         <Robot pose={pose} say={say} bubble={phase === "number" || phase === "close"} fresh={phase === "number" ? number : undefined} />

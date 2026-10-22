@@ -38,7 +38,7 @@ export function Mission3() {
   const hint = () => setHinted(true);
 
   return (
-    <section className="play story-play">
+    <section className="play story-play guide-play">
       <Hud title="Mirar y decidir" onRepeat={repeat} onHint={phase === "look" ? hint : undefined} />
       <div className="story-layout">
         <Robot pose={pose} say={phase === "look" && !picked ? say : say} bubble={phase === "number" || phase === "close"} fresh={phase === "number" ? number : undefined} />
