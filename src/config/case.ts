@@ -1,10 +1,20 @@
 import type { Level } from "./gameConfig";
 
-export const STORY_TITLE = "El caso de la torre caída";
-
-export const STORY_INTRO = "Este es el caso de la torre caída. La historia sale del libro.";
+export const STORY_TITLE = "El caso de las torres";
 
 export const MAP_INTRO = "Este es nuestro mapa. En cada misión encontraremos un número. Yo los recordaré para abrir el maletín. ¡Vamos a la primera!";
+
+export const OPEN_CASE = "Agentes, este libro guarda un caso para investigar. Primero leamos la historia. Después, revisaremos las pistas para encontrar el primer número del maletín.";
+
+export const CASE_BRIDGE = "Ahora sí, agentes. Miremos qué sintió el personaje y qué podría hacer antes de actuar.";
+
+export const NUMBER_LINE = "¡Encontramos la primera pista! Este es el primer número del maletín. Lo guardaré para recordarlo.";
+
+export const CLOSE_1 = "Sentir enojo o frustración está bien. Lastimar no. Podemos detenernos un momento antes de actuar, aunque todavía estemos enojados.";
+
+export const CLOSE_1_NEXT = "Ahora investiguemos qué puede ayudarnos a encontrar un poco de calma.";
+
+export const MAP_AFTER_1 = "Nuestra próxima misión: descubrir maneras de encontrar calma.";
 
 export interface StoryPage {
   id: string;
@@ -15,119 +25,127 @@ export interface StoryPage {
 export const STORY: StoryPage[] = [
   {
     id: "construyen",
-    image: "/assets/story/01-torre.png",
-    text: "Dos compañeros construyen una torre para guardar una pista. Están ilusionados: ya casi terminan.",
+    image: "/assets/story/pagina-1.png",
+    text: "Dos amigos construían una torre.\nQuerían que llegara muy alto.",
+  },
+  {
+    id: "ultima",
+    image: "/assets/story/pagina-2.png",
+    text: "El niño levantó la última pieza.\n—¡Mira! ¡Está casi lista!",
   },
   {
     id: "cae",
-    image: "/assets/story/02-cae.jpg",
-    text: "Una pieza se mueve y la torre se cae. Así ocurrió. No hay un culpable.",
+    image: "/assets/story/pagina-3.png",
+    text: "Pero la torre se tambaleó…\n¡Y las piezas cayeron al suelo!",
   },
   {
-    id: "siente",
-    image: "/assets/story/03-enojo.jpg",
-    text: "Uno de ellos siente enojo y frustración. Quería que resultara, y no resultó.",
+    id: "enojo",
+    image: "/assets/story/pagina-4.png",
+    text: "Había trabajado mucho.\nSintió la cara caliente y apretó las manos.\n¡Estaba muy enojado y frustrado!",
   },
   {
-    id: "ganas",
-    image: "/assets/story/04-ganas.jpg",
-    text: "Tiene ganas de empujar las piezas o de gritar. Sentir esa rabia es válido. Todavía no la ha hecho.",
-  },
-  {
-    id: "dice",
-    image: "/assets/story/05-decirlo.jpg",
-    text: "Encuentra una forma de decir que está enojado, sin hacer daño. La torre puede esperar.",
+    id: "impulso",
+    image: "/assets/story/pagina-5.png",
+    text: "Le dieron ganas de tirar las otras torres,\ngritarle a su amiga y empujarla.",
   },
 ];
 
-export interface Choice {
+export interface CaseOption {
   id: string;
   label: string;
-  ok: boolean;
+  image?: string;
+  reply: string;
+  next: "retry" | "continue" | "number";
 }
 
 export interface CaseQuestion {
   prompt: string;
-  image: string;
   hint: string;
-  miss: string;
-  options: Choice[];
+  support?: string;
+  options: CaseOption[];
 }
+
+const GRITAR = "/assets/story/impulso.png";
+const EMPUJAR = "/assets/story/impulso.png";
+const DETENER = "/assets/story/detenerse.png";
+
+const ACTION_OPTIONS: CaseOption[] = [
+  {
+    id: "gritar",
+    label: "Gritarle a su amiga",
+    image: GRITAR,
+    reply: "Puede sentir mucho enojo. Pero gritarle a su amiga puede asustarla o hacerla sentir mal. Busquemos una forma de expresarlo sin lastimar.",
+    next: "retry",
+  },
+  {
+    id: "empujar",
+    label: "Empujar a su amiga",
+    image: EMPUJAR,
+    reply: "Está bien sentir enojo. Empujar puede lastimar a su amiga. Probemos otra opción.",
+    next: "retry",
+  },
+  {
+    id: "detenerse",
+    label: "Detenerse un momento",
+    image: DETENER,
+    reply: "Detenerse un momento puede ayudarlo a no actuar por impulso. Puede seguir enojado mientras hace esa pausa.",
+    next: "number",
+  },
+];
 
 export const QUESTIONS: Record<Level, CaseQuestion[]> = {
   exploradores: [
     {
-      prompt: "¿Qué pasó con la torre?",
-      image: "/assets/story/02-cae.jpg",
-      hint: "Mira las piezas: quedaron en el suelo.",
-      miss: "Casi. Vuelve a mirar qué le ocurrió a la torre.",
+      prompt: "¿Cómo se sintió cuando se cayó la torre?",
+      hint: "Vuelve a mirar su cara y sus manos.",
+      support: "/assets/story/pagina-4.png",
       options: [
-        { id: "cae", label: "Se cayó", ok: true },
-        { id: "alta", label: "Se hizo más alta", ok: false },
-        { id: "fuera", label: "Desapareció", ok: false },
+        { id: "enojo", label: "Enojado o frustrado.", reply: "Sí. Quería que la torre resultara y se cayó. Eso puede causar enojo o frustración.", next: "continue" },
+        { id: "contento", label: "Contento.", reply: "Miremos las pistas: apretó las manos y sintió la cara caliente. ¿Cómo podría sentirse?", next: "retry" },
+        { id: "tranquilo", label: "Tranquilo.", reply: "Miremos las pistas: apretó las manos y sintió la cara caliente. ¿Cómo podría sentirse?", next: "retry" },
       ],
     },
     {
-      prompt: "¿Cómo podría sentirse?",
-      image: "/assets/story/03-enojo.jpg",
-      hint: "Quería terminar y no resultó. Eso puede ser enojo o frustración.",
-      miss: "Enojo y frustración pueden ser lo que siente. Prueba esa.",
+      prompt: "¿Está bien sentir enojo o frustración?",
+      hint: "Sentir una emoción puede ser incómodo y, aun así, estar bien.",
       options: [
-        { id: "enojo", label: "Enojo o frustración", ok: true },
-        { id: "alegria", label: "Solo alegría", ok: false },
-        { id: "sueno", label: "Sueño", ok: false },
+        { id: "si", label: "Sí.", reply: "Sí. Todos podemos sentir enojo o frustración. Sentirlo no nos hace malos.", next: "continue" },
+        { id: "no", label: "No.", reply: "El enojo puede ser incómodo, pero no está mal sentirlo. Lo importante es qué hacemos cuando aparece.", next: "continue" },
       ],
     },
     {
-      prompt: "¿Cuál permite expresar su enojo sin lastimar?",
-      image: "/assets/story/05-decirlo.jpg",
-      hint: "Se puede decir lo que se siente, sin empujar ni golpear.",
-      miss: "Esa forma puede lastimar. Hay otra que cuida.",
-      options: [
-        { id: "decir", label: "Decirlo con palabras", ok: true },
-        { id: "empujar", label: "Empujar las piezas", ok: false },
-        { id: "golpear", label: "Golpear", ok: false },
-      ],
+      prompt: "¿Qué podría hacer primero para no lastimar?",
+      hint: "Busca lo que hace una pausa, sin lastimar.",
+      options: ACTION_OPTIONS,
     },
   ],
   detectives: [
     {
-      prompt: "¿Por qué podría sentirse frustrado?",
-      image: "/assets/story/03-enojo.jpg",
-      hint: "La frustración aparece cuando algo que queríamos no resulta.",
-      miss: "Fíjate en lo que quería y en lo que pasó.",
+      prompt: "¿Cómo se sintió el personaje y qué pistas del cuento te ayudan a saberlo?",
+      hint: "Fíjate en el cuerpo y en lo que no resultó.",
+      support: "/assets/story/pagina-4.png",
       options: [
-        { id: "queria", label: "Quería terminar la torre y se cayó", ok: true },
-        { id: "alta", label: "Porque la torre quedó más alta", ok: false },
-        { id: "no", label: "Porque ya no quería jugar", ok: false },
+        { id: "enojo", label: "Enojado o frustrado: apretó las manos y tenía la cara caliente.", reply: "Las pistas nos ayudan a comprender cómo podría sentirse. Había trabajado mucho y la torre no resultó como esperaba.", next: "continue" },
+        { id: "contento", label: "Contento, porque la torre quedó terminada.", reply: "Miremos otra vez las pistas: las manos, la cara y lo que pasó con la torre.", next: "retry" },
+        { id: "tranquilo", label: "Tranquilo, porque no le importaba.", reply: "Miremos otra vez las pistas: las manos, la cara y lo que pasó con la torre.", next: "retry" },
       ],
     },
     {
-      prompt: "¿Qué diferencia hay entre sentir ganas de empujar y hacerlo?",
-      image: "/assets/story/04-ganas.jpg",
-      hint: "La emoción puede estar. Importa cómo se expresa.",
-      miss: "Sentir no es lo mismo que hacer daño. Mira la opción que las separa.",
+      prompt: "¿Está mal sentir enojo? ¿Es lo mismo sentirlo que lastimar a alguien?",
+      hint: "Una emoción y una acción pueden ser distintas.",
       options: [
-        { id: "separar", label: "Sentir ganas es válido; hacerlo puede lastimar", ok: true },
-        { id: "igual", label: "Es exactamente lo mismo", ok: false },
-        { id: "ya", label: "Las ganas ya son un daño", ok: false },
+        { id: "distinto", label: "Sentir enojo está bien; lastimar es distinto.", reply: "Exacto. Una emoción y una acción no son lo mismo. Podemos sentir enojo y elegir cómo expresarlo.", next: "continue" },
+        { id: "mal", label: "Sentir enojo siempre está mal.", reply: "Sentir enojo no está mal. Pero estar enojados no hace que lastimar sea una opción segura. Podemos buscar otra forma de expresarlo.", next: "continue" },
+        { id: "permite", label: "Estar enojado permite lastimar.", reply: "Sentir enojo no está mal. Pero estar enojados no hace que lastimar sea una opción segura. Podemos buscar otra forma de expresarlo.", next: "continue" },
       ],
     },
     {
-      prompt: "¿Qué podría decir sin dañar a su compañero?",
-      image: "/assets/story/05-decirlo.jpg",
-      hint: "Puede nombrar lo que siente y lo que pasó, sin culpar.",
-      miss: "Esa frase puede herir. Hay una que dice el enojo sin dañar.",
-      options: [
-        { id: "decir", label: "Estoy enojado porque la torre se cayó", ok: true },
-        { id: "culpa", label: "Fue tu culpa", ok: false },
-        { id: "tirar", label: "Voy a tirar todo", ok: false },
-      ],
+      prompt: "¿Qué podría hacer primero para no lastimar? Piensa por qué.",
+      hint: "Busca lo que hace una pausa, sin lastimar.",
+      options: ACTION_OPTIONS,
     },
   ],
 };
-
-export const CLOSE_1 = "El enojo y la frustración son emociones válidas. Puedo expresarlas sin lastimarme, lastimar a otras personas ni dañar cosas.";
 export const CLOSE_2 = "No todos encontramos calma de la misma manera. Puedo probar algo que me ayude a bajar un poco la intensidad y volver cuando esté listo.";
 export const CLOSE_3 = "Puedo sentir frustración, detenerme para no hacer daño, buscar algo que me ayude y decidir qué hacer con el problema.";
 

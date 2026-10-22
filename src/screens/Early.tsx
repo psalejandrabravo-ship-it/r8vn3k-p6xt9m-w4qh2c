@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { COVER, SUBTITLE, TITLE, statusLabel } from "../config/gameConfig";
-import { MAP_INTRO } from "../config/case";
+import { MAP_AFTER_1, MAP_INTRO } from "../config/case";
 import { Robot, type RobotPose } from "../components/Robot";
 import { blip } from "../lib/sound";
 import { useSession } from "../state/sessionStore";
@@ -22,14 +22,12 @@ function unlocked(id: MissionId | "case", missions: Record<MissionId, string>) {
   return done(3);
 }
 
-function mapSpeech(missions: Record<MissionId, string>, hinted: boolean) {
+function mapSpeech(missions: Record<MissionId, string>) {
   const done = (id: MissionId) => missions[id] === "completed" || missions[id] === "skipped";
-  if (!hinted && !done(1)) return MAP_INTRO;
   if (done(3)) return "Los tres números están listos. El maletín puede abrirse.";
   if (done(2)) return "Ya van dos números. Ahora podemos mirar y decidir.";
-  if (done(1)) return "El primer número ya está conmigo. Sigamos a la siguiente misión.";
-  if (missions[1] === "exploring") return "Podemos seguir el caso de la torre.";
-  return "La primera misión nos espera.";
+  if (done(1)) return MAP_AFTER_1;
+  return MAP_INTRO;
 }
 
 export function CoverSetup() {
@@ -105,7 +103,7 @@ export function IntroVideo() {
 export function MapScreen() {
   const session = useSession();
   const { missions, activity } = session.persisted;
-  const [line] = useState(() => mapSpeech(missions, activity.tutorial.hinted));
+  const [line] = useState(() => mapSpeech(missions));
   const [showNumbers, setShowNumbers] = useState(false);
   const next = ([1, 2, 3] as MissionId[]).find((id) => unlocked(id, missions) && missions[id] !== "completed" && missions[id] !== "skipped");
   const pose: RobotPose = unlocked("case", missions) ? "descubrimiento" : "señalando";
