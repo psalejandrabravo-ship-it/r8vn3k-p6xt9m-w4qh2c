@@ -65,23 +65,23 @@ export interface CaseQuestion {
   options: CaseOption[];
 }
 
-const GRITAR = "/assets/story/impulso.png";
-const EMPUJAR = "/assets/story/impulso.png";
+const IMPULSO = "/assets/story/impulso.png";
+const BERRINCHE = "/assets/story/berrinche.png";
 const DETENER = "/assets/story/detenerse.png";
 
 const ACTION_OPTIONS: CaseOption[] = [
   {
     id: "gritar",
-    label: "Gritarle a su amiga",
-    image: GRITAR,
-    reply: "Puede sentir mucho enojo. Pero gritarle a su amiga puede asustarla o hacerla sentir mal. Busquemos una forma de expresarlo sin lastimar.",
+    label: "Gritar o empujar a su amiga",
+    image: IMPULSO,
+    reply: "Puede sentir mucho enojo. Pero gritarle o empujarla puede asustarla o lastimarla. Busquemos una forma de expresarlo sin lastimar.",
     next: "retry",
   },
   {
-    id: "empujar",
-    label: "Empujar a su amiga",
-    image: EMPUJAR,
-    reply: "Está bien sentir enojo. Empujar puede lastimar a su amiga. Probemos otra opción.",
+    id: "berrinche",
+    label: "Hacer berrinche o tirar las cosas",
+    image: BERRINCHE,
+    reply: "Está bien sentir enojo. Hacer un berrinche o tirar las cosas puede lastimar o romper algo. Probemos otra opción.",
     next: "retry",
   },
   {
@@ -114,7 +114,7 @@ export const QUESTIONS: Record<Level, CaseQuestion[]> = {
       ],
     },
     {
-      prompt: "¿Qué podría hacer primero para no lastimar?",
+      prompt: "¿Qué podría hacer ahora que está frustrado y/o enojado?",
       hint: "Busca lo que hace una pausa, sin lastimar.",
       options: ACTION_OPTIONS,
     },
@@ -140,7 +140,7 @@ export const QUESTIONS: Record<Level, CaseQuestion[]> = {
       ],
     },
     {
-      prompt: "¿Qué podría hacer primero para no lastimar? Piensa por qué.",
+      prompt: "¿Qué podría hacer ahora que está frustrado y/o enojado?",
       hint: "Busca lo que hace una pausa, sin lastimar.",
       options: ACTION_OPTIONS,
     },

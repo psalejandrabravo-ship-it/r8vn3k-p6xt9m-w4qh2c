@@ -81,29 +81,52 @@ export function Mission1() {
     if (text) speak(text, narration);
   };
 
+  const investigate = () => {
+    setPhase("questions");
+    setBridged(false);
+    setQIndex(0);
+    setReply(null);
+    setPicked(null);
+    setHint(null);
+  };
+  const pickedOption = question.options.find((option) => option.id === picked);
+  const replyArt = pickedOption?.image || question.support;
+
   return (
-    <section className="play story-play">
+    <section className={`play story-play case-play phase-${phase}${reply ? " is-reply" : ""}${phase === "questions" && !bridged ? " is-bridge" : ""}`}>
       <Hud title={STORY_TITLE} onRepeat={repeat} onHint={phase === "questions" && bridged && !reply ? () => { setHint(question.hint); speak(question.hint, narration); } : undefined} />
       <div className="story-layout">
         <Robot pose={pose} say={say} bubble={phase === "number" || phase === "close"} fresh={phase === "number" ? number : undefined} />
         {phase === "open" && (
-          <div className="story-stage">
+          <div className="story-stage open-stage">
             <img className="book-pic intro-book" src={BOOK_OPEN} alt="" />
             <button type="button" className="btn" onClick={() => { setPhase("story"); setPage(0); }}>Abrir el cuento</button>
           </div>
         )}
         {phase === "story" && (
           <div className="story-stage">
-            <p className="reading">{STORY[page].text}</p>
-            {!turning && <img className="popout" src={STORY[page].image} alt="" />}
-            <img className="book-pic" src={turning ? BOOK_TURN : BOOK_OPEN} alt="" />
+            <div className="spread">
+              {!turning && <img className="popout" src={STORY[page].image} alt="" />}
+              <div className="book-wrap">
+                <img className="book-pic" src={turning ? BOOK_TURN : BOOK_OPEN} alt="" />
+                {!turning && <p className="reading in-book">{STORY[page].text}</p>}
+                <button type="button" className="page-hit left" aria-label="Página anterior" disabled={page === 0 || turning} onClick={() => goPage(page - 1)} />
+                <button
+                  type="button"
+                  className="page-hit right"
+                  aria-label={page < STORY.length - 1 ? "Pasar la página" : "Investigar el caso"}
+                  disabled={turning}
+                  onClick={() => { if (page < STORY.length - 1) goPage(page + 1); else investigate(); }}
+                />
+              </div>
+            </div>
             <div className="book-nav">
               <button type="button" className="text-arrow" disabled={page === 0 || turning} onClick={() => goPage(page - 1)}>Anterior</button>
               <span>{page + 1} / {STORY.length}</span>
               {page < STORY.length - 1 ? (
                 <button type="button" className="text-arrow" disabled={turning} onClick={() => goPage(page + 1)}>Siguiente</button>
               ) : (
-                <button type="button" className="btn" onClick={() => { setPhase("questions"); setBridged(false); setQIndex(0); setReply(null); setPicked(null); setHint(null); }}>Investigar el caso</button>
+                <button type="button" className="btn" onClick={investigate}>Investigar el caso</button>
               )}
             </div>
           </div>
@@ -113,10 +136,8 @@ export function Mission1() {
             {!bridged ? (
               <button type="button" className="btn" onClick={() => setBridged(true)}>Seguir</button>
             ) : reply ? (
-              <div className="ask-reply">
-                {question.options.find((option) => option.id === picked)?.image && (
-                  <img src={question.options.find((option) => option.id === picked)?.image} alt="" />
-                )}
+              <div className="reply-stage">
+                {replyArt && <img className="reply-art" src={replyArt} alt="" />}
                 <button type="button" className="btn" onClick={() => {
                   if (replyNext === "retry") { setReply(null); setPicked(null); return; }
                   if (replyNext === "number" || qIndex + 1 >= questions.length) { setPhase("number"); return; }
@@ -130,7 +151,7 @@ export function Mission1() {
               <>
                 <p className="reading ask">{question.prompt}</p>
                 {hint && <p className="hint-line">{hint}</p>}
-                {question.support && <img className="support" src={question.support} alt="" />}
+                {question.support && !question.options.some((option) => option.image) && <img className="support" src={question.support} alt="" />}
                 {question.options.some((option) => option.image) ? (
                   <div className="action-cards">
                     {question.options.map((option) => (
@@ -154,15 +175,13 @@ export function Mission1() {
           </div>
         )}
         {phase === "number" && (
-          <div className="case-ask">
+          <div className="case-ask number-stage">
             <p className="found-number">{number}</p>
             <button type="button" className="btn" onClick={() => setPhase("close")}>Seguir</button>
           </div>
         )}
         {phase === "close" && (
-          <div className="case-ask">
-            <p className="reading ask">{CLOSE_1}</p>
-            <p className="reading ask">{CLOSE_1_NEXT}</p>
+          <div className="case-ask number-stage">
             <button type="button" className="btn" onClick={() => session.setScreen("P06")}>Volver al mapa</button>
           </div>
         )}
