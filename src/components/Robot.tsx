@@ -21,6 +21,7 @@ export function Robot({
   fresh,
   className = "",
   onTap,
+  src,
 }: {
   pose: RobotPose;
   say?: string;
@@ -28,6 +29,7 @@ export function Robot({
   fresh?: number;
   className?: string;
   onTap?: () => void;
+  src?: string;
 }) {
   const session = useSession();
   const [nudged, setNudged] = useState(false);
@@ -52,7 +54,7 @@ export function Robot({
             window.setTimeout(() => setNudged(false), 420);
           }}
         >
-          <img src={POSE_SRC[pose]} alt="" />
+          <img src={src ?? POSE_SRC[pose]} alt="" />
         </button>
       </div>
     </div>

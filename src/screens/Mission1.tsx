@@ -104,12 +104,15 @@ export function Mission1() {
           say={say}
           bubble={phase === "number" || phase === "close"}
           fresh={phase === "number" ? number : undefined}
+          src={phase === "questions" && !bridged ? "/assets/robot/pensando-sentado.gif" : undefined}
           onTap={asking ? () => setHint(question.hint) : undefined}
         />
         {phase === "open" && (
           <div className="story-stage open-stage">
-            <img className="book-pic intro-book" src={BOOK_OPEN} alt="" />
-            <button type="button" className="btn" onClick={() => { setPhase("story"); setPage(0); }}>Abrir el cuento</button>
+            <button type="button" className="book-open-hit" onClick={() => { setPhase("story"); setPage(0); }}>
+              <img className="book-pic intro-book" src={BOOK_OPEN} alt="Libro del cuento" />
+            </button>
+            <p className="tap-legend">Toca el libro para abrirlo.</p>
           </div>
         )}
         {phase === "story" && (

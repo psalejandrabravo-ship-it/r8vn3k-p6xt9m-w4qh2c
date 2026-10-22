@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { COVER, SUBTITLE, TITLE, statusLabel } from "../config/gameConfig";
 import { MAP_AFTER_1, MAP_INTRO } from "../config/case";
-import { Robot, type RobotPose } from "../components/Robot";
+import { NumberBubble } from "../components/Robot";
 import { blip } from "../lib/sound";
+import { speak } from "../lib/speech";
 import { useSession } from "../state/sessionStore";
 import type { MissionId } from "../config/gameConfig";
 
@@ -107,7 +108,16 @@ export function MapScreen() {
   const [line] = useState(() => mapSpeech(missions));
   const [showNumbers, setShowNumbers] = useState(false);
   const next = ([1, 2, 3] as MissionId[]).find((id) => unlocked(id, missions) && missions[id] !== "completed" && missions[id] !== "skipped");
-  const pose: RobotPose = unlocked("case", missions) ? "descubrimiento" : "señalando";
+  const reduce = session.persisted.reducedMotion;
+  const [landed, setLanded] = useState(reduce);
+  useEffect(() => {
+    speak(line, session.persisted.narration);
+  }, [line, session.persisted.narration]);
+  useEffect(() => {
+    if (reduce) return;
+    const timer = window.setTimeout(() => setLanded(true), 3000);
+    return () => window.clearTimeout(timer);
+  }, [reduce]);
   useEffect(() => {
     if (activity.tutorial.hinted) return;
     session.patch({
@@ -163,7 +173,11 @@ export function MapScreen() {
           <b className="stamp">Maletín</b>
         </button>
         <div className="map-robot">
-          <Robot pose={pose} say={line} bubble={showNumbers} />
+          <p className="robot-say">{line}</p>
+          <div className="map-figure">
+            {showNumbers && <NumberBubble />}
+            <img src={landed ? "/assets/robot/saludando-quieto.png" : "/assets/robot/llegando.gif"} alt="" />
+          </div>
           <button type="button" className="text-arrow numbers-toggle" onClick={() => setShowNumbers((value) => !value)}>
             {showNumbers ? "Ocultar números" : "Ver números"}
           </button>

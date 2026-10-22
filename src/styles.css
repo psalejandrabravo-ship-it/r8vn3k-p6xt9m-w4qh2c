@@ -698,14 +698,25 @@ body.reduce .flip.open .flip-back { transform: none; }
 .intro-card { color: var(--cream); font-weight: 800; text-align: center; padding: 24px; }
 .pin.mark.is-locked { opacity: 0.45; }
 .map-robot {
-  position: absolute; left: 3%; right: 3%; bottom: 1%; z-index: 5;
-  display: flex; align-items: flex-end; gap: 8px; pointer-events: none;
+  position: absolute; right: 2%; bottom: 3%; left: auto; z-index: 5;
+  width: min(360px, 34%);
+  display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+  pointer-events: none;
 }
-.map-robot .robot-guide { display: flex; flex-direction: row; align-items: flex-end; gap: 8px; pointer-events: auto; }
-.map-robot .robot-stack { width: 150px; position: relative; }
-.map-robot .robot-body img { height: 168px; width: 150px; }
-.map-robot .robot-say { max-width: 340px; margin: 0 0 12px; }
-.numbers-toggle { pointer-events: auto; margin-bottom: 8px; }
+.map-robot .robot-say {
+  position: relative; margin: 0; max-width: 320px;
+  background: #fffaf3; color: #2b2155; border-radius: 18px; padding: 12px 14px;
+  font-weight: 800; line-height: 1.35; text-align: left;
+  box-shadow: 0 6px 0 rgba(43, 33, 85, 0.16);
+}
+.map-robot .robot-say::after {
+  content: ""; position: absolute; right: 42px; bottom: -12px;
+  border: 8px solid transparent; border-top-color: #fffaf3;
+}
+.map-figure { position: relative; width: min(280px, 30vw); }
+.map-figure img { width: 100%; height: auto; display: block; filter: drop-shadow(0 12px 8px rgba(20, 16, 8, 0.28)); }
+.map-figure .thought { left: auto; right: 78%; top: 6%; translate: 0 0; }
+.numbers-toggle { pointer-events: auto; }
 .map-config { position: absolute; top: 12px; right: 56px; z-index: 6; min-height: var(--tap); }
 .story-layout {
   flex: 1; min-height: 0;
@@ -867,17 +878,34 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
   content: ""; position: absolute; left: 46%; bottom: -12px;
   border: 8px solid transparent; border-top-color: #fffaf3;
 }
-.case-play.phase-open .robot-guide { left: 7%; bottom: 16%; width: min(230px, 26cqw); }
-.case-play.phase-open .robot-say { max-width: min(320px, 36cqw); }
+.case-play.phase-open .robot-guide { left: 1%; bottom: 4%; width: min(200px, 22cqw); align-items: flex-start; }
+.case-play.phase-open .robot-say { max-width: min(250px, 28cqw); text-align: left; }
+.case-play.phase-open .open-stage { padding-left: 16%; }
 .case-play.phase-story .robot-guide { left: 2%; bottom: 10%; width: min(160px, 18cqw); }
 .case-play.phase-story .robot-say { display: none; }
 .case-play.phase-questions:not(.is-reply):not(.is-bridge):not(.has-hint) .robot-guide { left: 2%; bottom: 10%; width: min(170px, 20cqw); }
 .case-play.phase-questions:not(.is-reply):not(.is-bridge):not(.has-hint) .robot-say { display: none; }
 .case-play.has-hint .robot-guide { left: 2%; bottom: 8%; width: min(220px, 26cqw); }
 .case-play.has-hint .robot-say { display: block; max-width: min(300px, 36cqw); }
+.case-play.phase-open,
+.case-play.phase-story {
+  background: #24588a url("/assets/ui/papel-cuento.jpg") center / cover no-repeat;
+}
+.case-play.phase-open .hud strong,
+.case-play.phase-story .hud strong,
+.case-play.phase-open .tap-legend,
+.case-play.phase-story .book-nav { color: #fffaf3; }
+.book-open-hit { border: 0; background: transparent; padding: 0; cursor: pointer; width: min(88%, 860px); }
+.book-open-hit img { width: 100%; height: auto; display: block; }
 .case-play.is-talk .robot-guide {
   left: 50%; bottom: 5%; width: min(300px, 34cqw); translate: -50% 0; align-items: center;
 }
+.case-play.is-bridge .robot-guide {
+  left: 50%; bottom: 4%; width: min(480px, 52cqw); translate: -50% 0; align-items: center;
+}
+.case-play.is-bridge .robot-stack,
+.case-play.is-bridge .robot-body,
+.case-play.is-bridge .robot-body img { width: min(420px, 46cqw); height: auto; animation: none; }
 .case-play.is-talk .robot-say { max-width: min(540px, 72cqw); text-align: center; }
 .case-play .thought, .guide-play .thought { left: 100%; right: auto; top: 4%; translate: 10px 0; }
 .case-play .story-stage,
@@ -902,8 +930,8 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .case-play .book-wrap { position: relative; width: min(100%, 1000px); }
 .case-play .book-pic { width: 100%; max-height: 50cqh; object-fit: contain; }
 .case-play .reading.in-book {
-  position: absolute; left: 16%; right: 16%; bottom: 44%; z-index: 3;
-  color: #161616; text-shadow: none; font-size: clamp(0.95rem, 1.7cqw, 1.15rem);
+  position: absolute; left: 14%; right: 14%; bottom: 58%; z-index: 3;
+  color: #161616; text-shadow: none; font-size: clamp(1.2rem, 2.4cqw, 1.6rem);
   pointer-events: none;
 }
 .case-play .book-wrap .page-hit {
@@ -1001,6 +1029,6 @@ body.reduce .guide-play .robot-guide { transition: none; }
   .case-play .action-cards { grid-template-columns: 1fr; }
   .case-play.phase-open .robot-guide { width: 140px; left: 8%; }
   .case-play .open-stage { padding: 0; }
-  .case-play .reading.in-book { font-size: 0.85rem; bottom: 10%; }
+  .case-play .reading.in-book { font-size: 1rem; bottom: 46%; }
 }
 
