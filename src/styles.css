@@ -884,26 +884,26 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .case-play.phase-story .robot-guide { left: 2%; bottom: 10%; width: min(160px, 18cqw); }
 .case-play.phase-story .robot-say { display: none; }
 .case-play.phase-questions:not(.is-reply):not(.is-bridge) .robot-guide {
-  left: auto; right: 2%; top: 14%; bottom: auto;
-  width: min(280px, 30cqw); align-items: flex-end;
+  left: 1%; right: auto; top: auto; bottom: 6%;
+  width: min(220px, 24cqw); align-items: flex-start;
 }
 .case-play.phase-questions:not(.is-reply):not(.is-bridge) .robot-stack,
 .case-play.phase-questions:not(.is-reply):not(.is-bridge) .robot-body,
 .case-play.phase-questions:not(.is-reply):not(.is-bridge) .robot-body img {
-  width: min(280px, 30cqw); height: auto;
+  width: min(220px, 24cqw); height: auto;
 }
 .case-play.phase-questions:not(.is-reply):not(.is-bridge):not(.has-hint) .robot-say { display: none; }
 .case-play.has-hint .robot-say { display: block; max-width: min(280px, 34cqw); }
 .case-play.phase-questions.has-hint .robot-say {
-  position: absolute; right: 104%; top: 6%; margin: 0; text-align: left;
+  position: absolute; left: 102%; right: auto; top: 4%; margin: 0; text-align: left;
 }
 .case-play.phase-questions.has-hint .robot-say::after {
-  left: auto; right: -14px; bottom: 18px;
-  border-top-color: transparent; border-left-color: #fffaf3;
+  left: -14px; right: auto; bottom: 18px;
+  border-top-color: transparent; border-left-color: transparent; border-right-color: #fffaf3;
 }
-.case-play.phase-questions:not(.is-reply):not(.is-bridge) .case-ask { padding: 4% 32% 6% 8%; align-items: center; }
+.case-play.phase-questions:not(.is-reply):not(.is-bridge) .case-ask { padding: 2% 8% 8%; align-items: center; }
 .case-play.phase-questions:not(.is-reply):not(.is-bridge) .visual-choices,
-.case-play.phase-questions:not(.is-reply):not(.is-bridge) .action-cards { width: min(100%, 560px); }
+.case-play.phase-questions:not(.is-reply):not(.is-bridge) .action-cards { width: min(100%, 640px); }
 .case-play.phase-open,
 .case-play.phase-story {
   background: #24588a url("/assets/ui/papel-cuento.jpg") center / cover no-repeat;
