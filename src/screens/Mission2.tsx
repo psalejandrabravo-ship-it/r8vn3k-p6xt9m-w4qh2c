@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CALM_HINT, CALM_INTRO, CALM_NOTE, CLOSE_2 } from "../config/case";
+import { CALM_HINT, CALM_INTRO, CALM_NOTE, CLOSE_2, WAYS_INTRO } from "../config/case";
 import { CALMA, clueByMission } from "../config/gameConfig";
 import { CalmLearn } from "../components/CalmLearn";
 import { Hud, LetterBoard } from "../components/ui";
@@ -20,7 +20,7 @@ export function Mission2() {
   const [note, setNote] = useState(CALM_INTRO);
   const [waysHint, setWaysHint] = useState<string | null>(null);
   const number = clueByMission(2).number;
-  const say = phase === "word" ? note : phase === "explain" ? CALM_NOTE : phase === "ways" ? waysHint ?? undefined : phase === "number" ? `El segundo número es ${number}. Yo lo recuerdo.` : CLOSE_2;
+  const say = phase === "word" ? note : phase === "explain" ? WAYS_INTRO : phase === "ways" ? waysHint ?? undefined : phase === "number" ? `El segundo número es ${number}. Yo lo recuerdo.` : CLOSE_2;
   const pose: RobotPose = phase === "number" ? "descubrimiento" : note !== CALM_INTRO && phase === "word" ? "acompañando" : "pensando";
 
   useEffect(() => {

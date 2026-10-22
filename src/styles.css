@@ -584,7 +584,7 @@ body.reduce .pin.pop { animation: none; }
 }
 .strategy-pick img { width: 100%; height: 56px; object-fit: cover; border-radius: 8px; display: block; }
 .strategy-pick.on { outline: 3px solid var(--gold); outline-offset: 2px; }
-.flip-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.flip-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 .flip {
   min-height: 120px; border: 0; background: transparent; padding: 0; perspective: 800px;
 }
@@ -618,7 +618,7 @@ body.reduce .flip.open .flip-back { transform: none; }
 .clue-note b { font-weight: 800; }
 .vchoice img { width: 88px; height: 72px; object-fit: cover; border-radius: 10px; }
 @media (max-width: 900px) {
-  .flip-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .flip-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .steps { grid-template-columns: 1fr 1fr; }
   .companion-row { max-width: 100%; }
 }

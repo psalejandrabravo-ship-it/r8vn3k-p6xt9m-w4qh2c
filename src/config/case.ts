@@ -152,6 +152,7 @@ export const CLOSE_3 = "Puedo sentir frustración, detenerme para no hacer daño
 export const CALM_INTRO = "Ya reconoció su enojo. Ahora puede buscar qué le ayude a hacer una pausa, antes de actuar por impulso.";
 export const CALM_HINT = "La calma se siente al respirar y al descansar. La palabra empieza con C.";
 export const CALM_NOTE = "La calma es sentirse más tranquilo por dentro. Se siente al respirar y al descansar. Si llega el enojo, se puede buscar otra vez.";
+export const WAYS_INTRO = "No a todos nos ayuda lo mismo. No tienes que dejar de estar enojado de inmediato.";
 
 export interface TowerOption {
   id: string;
