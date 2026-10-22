@@ -53,8 +53,10 @@ export function CoverSetup() {
         <img className="cover-art" src={COVER} alt="Seis agentes y un robot investigan juntos en una mesa" />
         <img className="brand-logo" src="/assets/brand/84070.png" alt="MIRARIM" />
         <div className="cover-copy">
-          <h1>{TITLE}</h1>
-          <p className="sub">{SUBTITLE}</p>
+          <div className="cover-titles">
+            <h1>{TITLE}</h1>
+            <p className="sub">{SUBTITLE}</p>
+          </div>
           <div className="row cover-actions">
             <button type="button" className="btn secondary" onClick={() => session.openDialog("config")}>Configuración</button>
             <button type="button" className="btn" onClick={play}>Jugar</button>

@@ -15,7 +15,7 @@ export interface StoryPage {
 export const STORY: StoryPage[] = [
   {
     id: "construyen",
-    image: "/assets/story/01-torre.jpg",
+    image: "/assets/story/01-torre.png",
     text: "Dos compañeros construyen una torre para guardar una pista. Están ilusionados: ya casi terminan.",
   },
   {
