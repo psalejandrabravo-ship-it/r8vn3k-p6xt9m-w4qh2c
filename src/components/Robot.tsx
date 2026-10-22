@@ -6,12 +6,12 @@ import { useSession } from "../state/sessionStore";
 export type RobotPose = "neutral" | "saludando" | "señalando" | "pensando" | "acompañando" | "descubrimiento";
 
 const POSE_SRC: Record<RobotPose, string> = {
-  neutral: "/assets/robot/neutral.png",
-  saludando: "/assets/robot/saludando.png",
-  señalando: "/assets/robot/señalando.png",
-  pensando: "/assets/robot/pensando.png",
-  acompañando: "/assets/robot/acompañando.png",
-  descubrimiento: "/assets/robot/descubrimiento.png",
+  neutral: "/assets/robot/neutral.gif",
+  saludando: "/assets/robot/saludando-quieto.png",
+  señalando: "/assets/robot/señalando.gif",
+  pensando: "/assets/robot/pensando-sentado.gif",
+  acompañando: "/assets/robot/acompañando.gif",
+  descubrimiento: "/assets/robot/descubrimiento.gif",
 };
 
 export function Robot({
