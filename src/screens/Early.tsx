@@ -158,6 +158,7 @@ export function MapScreen() {
             >
               <span className="ring" aria-hidden="true" />
               <b className="stamp">{pin.label}</b>
+              {(missions[pin.id] === "completed" || missions[pin.id] === "skipped") && <img className="done-badge" src="/assets/ui/mision-lista.png" alt="" />}
             </button>
           );
         })}

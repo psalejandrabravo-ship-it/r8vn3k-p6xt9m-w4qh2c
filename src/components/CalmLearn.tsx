@@ -3,14 +3,14 @@ import { blip } from "../lib/sound";
 import { useSession } from "../state/sessionStore";
 
 const CARDS = [
-  { id: "agua", label: "Tomar agua", legend: "Tomar un poco de agua puede ayudarte a hacer una pausa.", image: "/assets/illustrations/cards/agua.jpg" },
-  { id: "respirar", label: "Respirar despacio", legend: "Respirar suave y despacio puede ayudar a bajar el ritmo.", image: "/assets/illustrations/cards/respirar.jpg" },
-  { id: "llorar", label: "Llorar, si lo necesito", legend: "Si necesitas llorar, está bien. Puedes pedir compañía.", image: "/assets/illustrations/cards/llorar.jpg" },
-  { id: "abrazo", label: "Pedir un abrazo", legend: "Si te gustan los abrazos, puedes pedir uno para sentirte acompañado.", image: "/assets/illustrations/cards/abrazo.jpg" },
-  { id: "ayuda", label: "Pedir ayuda o compañía", legend: "Alguien de confianza puede acompañarte cuando lo necesitas.", image: "/assets/illustrations/cards/ayuda.jpg" },
-  { id: "contar", label: "Contar hasta diez", legend: "Contar despacio puede darte un momento antes de actuar.", image: "/assets/illustrations/cards/contar.jpg" },
-  { id: "distancia", label: "Tomar un poco de distancia", legend: "Apartarte un momento a un lugar seguro puede darte espacio.", image: "/assets/illustrations/cards/distancia.jpg" },
-  { id: "estirarse", label: "Moverse o estirarse", legend: "Moverte o estirarte suavemente puede ayudar a soltar la tensión.", image: "/assets/illustrations/cards/estirarse.jpg" },
+  { id: "agua", label: "Tomar agua", legend: "Tomar un poco de agua puede ayudarte a hacer una pausa.", image: "/assets/illustrations/cards/agua.png" },
+  { id: "respirar", label: "Respirar despacio", legend: "Respirar suave y despacio puede ayudar a bajar el ritmo.", image: "/assets/illustrations/cards/respirar.png" },
+  { id: "llorar", label: "Llorar, si lo necesito", legend: "Si necesitas llorar, está bien. Puedes pedir compañía.", image: "/assets/illustrations/cards/llorar.png" },
+  { id: "abrazo", label: "Pedir un abrazo", legend: "Si te gustan los abrazos, puedes pedir uno para sentirte acompañado.", image: "/assets/illustrations/cards/abrazo.png" },
+  { id: "ayuda", label: "Pedir ayuda o compañía", legend: "Alguien de confianza puede acompañarte cuando lo necesitas.", image: "/assets/illustrations/cards/ayuda.png" },
+  { id: "contar", label: "Contar hasta diez", legend: "Contar despacio puede darte un momento antes de actuar.", image: "/assets/illustrations/cards/contar.png" },
+  { id: "distancia", label: "Tomar un poco de distancia", legend: "Apartarte un momento a un lugar seguro puede darte espacio.", image: "/assets/illustrations/cards/distancia.png" },
+  { id: "estirarse", label: "Moverse o estirarse", legend: "Moverte o estirarte suavemente puede ayudar a soltar la tensión.", image: "/assets/illustrations/cards/estirarse.png" },
 ];
 
 export function CalmLearn({

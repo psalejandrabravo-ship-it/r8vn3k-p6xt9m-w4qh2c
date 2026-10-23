@@ -54,6 +54,7 @@ export interface CaseOption {
   id: string;
   label: string;
   image?: string;
+  face?: string;
   reply: string;
   next: "retry" | "continue" | "number";
 }
@@ -100,14 +101,15 @@ export const QUESTIONS: Record<Level, CaseQuestion[]> = {
       hint: "Apretó las manos y tenía la cara roja.",
       support: "/assets/story/pagina-4.png",
       options: [
-        { id: "enojo", label: "Enojado o frustrado.", reply: "Sí. Quería que la torre resultara y se cayó. Eso puede causar enojo o frustración.", next: "continue" },
-        { id: "contento", label: "Contento.", reply: "Miremos las pistas: apretó las manos y sintió la cara roja. ¿Cómo podría sentirse?", next: "retry" },
-        { id: "tranquilo", label: "Tranquilo.", reply: "Miremos las pistas: apretó las manos y sintió la cara roja. ¿Cómo podría sentirse?", next: "retry" },
+        { id: "enojo", label: "Enojado o frustrado.", face: "/assets/ui/cara-enojo.png", reply: "Sí. Quería que la torre resultara y se cayó. Eso puede causar enojo o frustración.", next: "continue" },
+        { id: "contento", label: "Contento.", face: "/assets/ui/cara-contento.png", reply: "Miremos las pistas: apretó las manos y sintió la cara roja. ¿Cómo podría sentirse?", next: "retry" },
+        { id: "tranquilo", label: "Tranquilo.", face: "/assets/ui/cara-tranquilo.png", reply: "Miremos las pistas: apretó las manos y sintió la cara roja. ¿Cómo podría sentirse?", next: "retry" },
       ],
     },
     {
       prompt: "¿Está bien sentir enojo o frustración?",
       hint: "Sentir una emoción puede ser incómodo y, aun así, estar bien.",
+      support: "/assets/story/pagina-4.png",
       options: [
         { id: "si", label: "Sí.", reply: "Sí. Todos podemos sentir enojo o frustración. Sentirlo no nos hace malos.", next: "continue" },
         { id: "no", label: "No.", reply: "El enojo puede ser incómodo, pero no está mal sentirlo. Lo importante es qué hacemos cuando aparece.", next: "continue" },
@@ -125,14 +127,15 @@ export const QUESTIONS: Record<Level, CaseQuestion[]> = {
       hint: "Apretó las manos y tenía la cara roja.",
       support: "/assets/story/pagina-4.png",
       options: [
-        { id: "enojo", label: "Enojado o frustrado.", reply: "Las pistas nos ayudan a comprender cómo podría sentirse. Había trabajado mucho y la torre no resultó como esperaba.", next: "continue" },
-        { id: "contento", label: "Contento.", reply: "Miremos otra vez las pistas: las manos, la cara y lo que pasó con la torre.", next: "retry" },
-        { id: "tranquilo", label: "Tranquilo.", reply: "Miremos otra vez las pistas: las manos, la cara y lo que pasó con la torre.", next: "retry" },
+        { id: "enojo", label: "Enojado o frustrado.", face: "/assets/ui/cara-enojo.png", reply: "Las pistas nos ayudan a comprender cómo podría sentirse. Había trabajado mucho y la torre no resultó como esperaba.", next: "continue" },
+        { id: "contento", label: "Contento.", face: "/assets/ui/cara-contento.png", reply: "Miremos otra vez las pistas: las manos, la cara y lo que pasó con la torre.", next: "retry" },
+        { id: "tranquilo", label: "Tranquilo.", face: "/assets/ui/cara-tranquilo.png", reply: "Miremos otra vez las pistas: las manos, la cara y lo que pasó con la torre.", next: "retry" },
       ],
     },
     {
       prompt: "¿Está mal sentir enojo? ¿Es lo mismo sentirlo que lastimar a alguien?",
       hint: "Una emoción y una acción pueden ser distintas.",
+      support: "/assets/story/pagina-4.png",
       options: [
         { id: "distinto", label: "Sentir enojo está bien; lastimar es distinto.", reply: "Exacto. Una emoción y una acción no son lo mismo. Podemos sentir enojo y elegir cómo expresarlo.", next: "continue" },
         { id: "mal", label: "Sentir enojo siempre está mal.", reply: "Sentir enojo no está mal. Pero estar enojados no hace que lastimar sea una opción segura. Podemos buscar otra forma de expresarlo.", next: "continue" },
@@ -152,7 +155,7 @@ export const CLOSE_3 = "Puedo sentir frustración, detenerme para no hacer daño
 export const CALM_INTRO = "Ya reconoció su enojo. Ahora puede buscar qué le ayude a hacer una pausa, antes de actuar por impulso.";
 export const CALM_HINT = "La calma se siente al respirar y al descansar. La palabra empieza con C.";
 export const CALM_NOTE = "La calma es sentirse más tranquilo por dentro. Se siente al respirar y al descansar. Si llega el enojo, se puede buscar otra vez.";
-export const WAYS_INTRO = "No a todos nos ayuda lo mismo. No tienes que dejar de estar enojado de inmediato.";
+export const WAYS_INTRO = "Encontrar la calma nos ayuda a detenernos y pensar. Pero no tienes que dejar de estar enojado de inmediato.";
 
 export interface TowerOption {
   id: string;

@@ -191,6 +191,7 @@ export function Mission1() {
                   <div className="visual-choices">
                     {question.options.map((option) => (
                       <button key={option.id} type="button" className="choice" onClick={() => { setPicked(option.id); setReply(option.reply); setReplyNext(option.next); blip(session.persisted.sounds); }}>
+                        {option.face && <img className="choice-face" src={option.face} alt="" />}
                         {option.label}
                       </button>
                     ))}
