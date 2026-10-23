@@ -26,7 +26,7 @@ function unlocked(id: MissionId | "case", missions: Record<MissionId, string>) {
 
 function mapSpeech(missions: Record<MissionId, string>) {
   const done = (id: MissionId) => missions[id] === "completed" || missions[id] === "skipped";
-  if (done(3)) return "Los tres números están listos. El maletín puede abrirse.";
+  if (done(3)) return "¡Tenemos los tres números! Vamos a abrir el maletín.";
   if (done(2)) return "Ya van dos números. Ahora podemos mirar y decidir.";
   if (done(1)) return MAP_AFTER_1;
   return MAP_INTRO;

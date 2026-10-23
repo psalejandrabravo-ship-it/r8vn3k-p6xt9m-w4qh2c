@@ -150,7 +150,9 @@ export const QUESTIONS: Record<Level, CaseQuestion[]> = {
   ],
 };
 export const CLOSE_2 = "No todos encontramos calma de la misma manera. Puedo probar algo que me ayude a bajar un poco la intensidad y volver cuando esté listo.";
-export const CLOSE_3 = "Puedo sentir frustración, detenerme para no hacer daño, buscar algo que me ayude y decidir qué hacer con el problema.";
+export const CLOSE_3 = "Puedo sentir enojo, hacer una pausa y elegir qué hacer sin lastimar.";
+export const CLOSE_3_MORE = "A veces necesitamos más de una pausa, probar otra estrategia o pedir compañía. No tiene que salir todo de una vez.";
+export const CLOSE_3_CASE = "¡Tenemos los tres números! Vamos a abrir el maletín.";
 
 export const CALM_INTRO = "Ya reconoció su enojo. Ahora puede buscar qué le ayude a hacer una pausa, antes de actuar por impulso.";
 export const CALM_HINT = "La calma se siente al respirar y al descansar. La palabra empieza con C.";

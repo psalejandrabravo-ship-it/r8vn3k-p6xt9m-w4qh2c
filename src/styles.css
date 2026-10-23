@@ -1122,3 +1122,68 @@ body.reduce .guide-play .robot-guide { transition: none; }
   .case-play .reading.in-book { font-size: 1rem; bottom: 46%; }
 }
 
+.mission-3 .robot-guide {
+  left: 1%; bottom: 2%; top: auto; width: min(150px, 16cqw); translate: none; align-items: flex-start;
+}
+.mission-3 .robot-body,
+.mission-3 .robot-body img { width: min(150px, 16cqw); max-height: 18cqh; height: auto; object-fit: contain; }
+.mission-3 .robot-say {
+  position: absolute; left: 112%; bottom: 28%; margin: 0; width: min(360px, 40cqw);
+  max-width: min(360px, 40cqw); text-align: left;
+}
+.mission-3.phase-intro .robot-guide,
+.mission-3.phase-bridge .robot-guide,
+.mission-3.phase-number .robot-guide,
+.mission-3.phase-close .robot-guide {
+  left: 50%; bottom: 16%; width: min(240px, 28cqw); translate: -50% 0; align-items: center;
+}
+.mission-3.phase-intro .robot-body img,
+.mission-3.phase-bridge .robot-body img,
+.mission-3.phase-number .robot-body img,
+.mission-3.phase-close .robot-body img { width: min(220px, 26cqw); max-height: 28cqh; }
+.mission-3.phase-intro .robot-say,
+.mission-3.phase-bridge .robot-say,
+.mission-3.phase-number .robot-say,
+.mission-3.phase-close .robot-say {
+  right: 112%; left: auto; bottom: auto; top: 0; width: min(340px, 38cqw); text-align: left;
+}
+.mission-3.phase-intro .robot-say::after,
+.mission-3.phase-bridge .robot-say::after,
+.mission-3.phase-number .robot-say::after,
+.mission-3.phase-close .robot-say::after {
+  left: auto; right: -14px; bottom: 18px; border-top-color: transparent; border-left-color: #fffaf3;
+}
+.m3-board {
+  height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; padding: 3% 6% 4% 14%;
+}
+.m3-pool, .m3-slots, .m3-options {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; width: min(100%, 960px);
+}
+.m3-card, .m3-slot {
+  min-width: 0; border: 0; background: transparent; color: var(--indigo);
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px;
+  font: inherit; font-weight: 800; text-align: center; padding: 0;
+}
+.m3-card img, .m3-slot img, .m3-hero { width: 100%; height: 18cqh; object-fit: contain; background: transparent; }
+.m3-card span, .m3-slot span, .m3-card small { font-size: 0.82rem; line-height: 1.2; }
+.m3-card small { font-weight: 700; }
+.m3-card.is-selected, .m3-slot.is-selected { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 12px; }
+.m3-slot {
+  min-height: 22cqh; border-radius: 16px; background: rgba(255, 250, 243, 0.45);
+  border: 2px dashed var(--indigo); justify-content: flex-start; padding: 6px;
+}
+.m3-slot b { font-size: 1.15rem; }
+.mission-3.phase-intro .m3-board,
+.mission-3.phase-bridge .m3-board,
+.mission-3.phase-chosen .m3-board,
+.mission-3.phase-number .m3-board,
+.mission-3.phase-close .m3-board { justify-content: flex-start; padding-top: 8%; }
+.m3-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+body.reduce .m3-card, body.reduce .m3-slot { transition: none; }
+@media (max-width: 800px) {
+  .m3-pool, .m3-slots, .m3-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .m3-board { padding: 8% 4% 18%; }
+  .mission-3 .robot-say { width: min(220px, 46vw); }
+}
+

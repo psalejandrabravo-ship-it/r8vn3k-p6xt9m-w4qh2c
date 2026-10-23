@@ -14,7 +14,7 @@ export function TopBar({ title, children }: { title: string; children?: ReactNod
   );
 }
 
-export function Hud({ title, onHint }: { title: string; onHint?: () => void }) {
+export function Hud({ title, onHint, onRepeat }: { title: string; onHint?: () => void; onRepeat?: () => void }) {
   const session = useSession();
   return (
     <header className="hud">
@@ -25,6 +25,7 @@ export function Hud({ title, onHint }: { title: string; onHint?: () => void }) {
         <strong>{title}</strong>
       </div>
       <div className="row tight">
+        {onRepeat && <button type="button" className="text-arrow" onClick={onRepeat}>Repetir</button>}
         {onHint && <button type="button" className="text-arrow" onClick={onHint}>Una pista</button>}
       </div>
     </header>
