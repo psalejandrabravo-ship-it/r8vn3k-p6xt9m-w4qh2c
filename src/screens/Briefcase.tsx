@@ -3,6 +3,7 @@ import { clueByMission, type MissionId } from "../config/gameConfig";
 import { Hud } from "../components/ui";
 import { Robot } from "../components/Robot";
 import { blip, chime } from "../lib/sound";
+import { hush } from "../lib/speech";
 import { useSession } from "../state/sessionStore";
 
 const INTRO = "¡Tenemos las tres pistas! Introduce los números en el orden en que los encontramos. Si necesitas recordarlos, tócame.";
@@ -12,33 +13,21 @@ const OPENED = "¡Abrimos el maletín! Encontraste tu insignia de detective. Tó
 const LEARNING = [
   {
     id: 1,
-    title: "Reconozco lo que siento",
-    summary: "Puedo sentir enojo o frustración.",
-    image: "/assets/story/pagina-4.png",
-    text: [
-      "Cuando algo no sale como esperaba, puedo sentir enojo o frustración. Mi cuerpo puede darme pistas: aprieto las manos, siento calor en la cara o noto tensión.",
-      "Sentir enojo no es hacer daño. Puedo decir “estoy enojado” y hacer una pausa para no lastimarme, lastimar a otra persona o romper cosas.",
-    ],
+    label: "Misión 1. Reconozco lo que siento",
+    image: "/assets/cierre/mision-1.png",
+    video: "/assets/video/mision-1.mp4",
   },
   {
     id: 2,
-    title: "Pruebo algo que me ayude",
-    summary: "Puedo hacer una pausa y buscar apoyo.",
-    image: "/assets/illustrations/cards/respirar.png",
-    text: [
-      "Puedo probar respirar despacio, tomar agua, contar, moverme suavemente, tomar distancia o pedir ayuda y compañía. Si me gustan los abrazos, puedo pedir uno. Si necesito llorar, está bien.",
-      "No a todos nos ayuda lo mismo. Puedo probar otra opción si la primera no me ayuda. No tengo que dejar de estar enojado de inmediato.",
-    ],
+    label: "Misión 2. Pruebo algo que me ayude",
+    image: "/assets/cierre/mision-2.png",
+    video: "",
   },
   {
     id: 3,
-    title: "Elijo cómo continuar",
-    summary: "Puedo pensar y decidir mi siguiente paso.",
-    image: "/assets/mision3/decido.png",
-    text: [
-      "Después de una pausa, puedo intentarlo otra vez, cambiar la idea, pedir ayuda o dejarlo para después.",
-      "No hace falta estar completamente tranquilo para elegir qué hacer. A veces necesito más de una pausa o compañía. Descansar también es una opción válida.",
-    ],
+    label: "Misión 3. Elijo cómo continuar",
+    image: "/assets/cierre/mision-3.png",
+    video: "",
   },
 ];
 
@@ -196,35 +185,40 @@ function CaseLock() {
 
 function Discoveries() {
   const session = useSession();
-  const [open, setOpen] = useState<number | null>(null);
-  const card = LEARNING.find((item) => item.id === open);
+  const [playing, setPlaying] = useState<number | null>(null);
+  const card = LEARNING.find((item) => item.id === playing);
+  useEffect(() => {
+    if (playing) hush();
+  }, [playing]);
   return (
     <section className="play case-finale discoveries">
       <Hud title="Lo que descubrimos" />
       <div className="finale-body learn">
-        <Robot pose="acompañando" say="Ser detective también es descubrir qué sentimos y qué podemos hacer. Estas son las pistas que aprendimos." />
+        {playing == null && (
+          <Robot pose="acompañando" say="Ser detective también es descubrir qué sentimos y qué podemos hacer. Toca una misión para ver su video." />
+        )}
         <div className="learn-row">
           {LEARNING.map((item) => (
             <button
               key={item.id}
               type="button"
-              className={open === item.id ? "learn-card on" : "learn-card"}
-              aria-expanded={open === item.id}
-              onClick={() => setOpen(open === item.id ? null : item.id)}
+              className={playing === item.id ? "learn-card on" : "learn-card"}
+              aria-pressed={playing === item.id}
+              aria-label={item.video ? `${item.label}. Reproducir video` : item.label}
+              onClick={() => {
+                hush();
+                setPlaying(playing === item.id ? null : item.id);
+              }}
             >
-              <small>Misión {item.id}</small>
               <img src={item.image} alt="" />
-              <b>{item.title}</b>
-              <span>{item.summary}</span>
             </button>
           ))}
         </div>
-        {card && (
-          <article className="learn-detail">
-            {card.text.map((line) => <p key={line}>{line}</p>)}
-          </article>
+        {card?.video && (
+          <video key={card.video} className="learn-video" src={card.video} controls autoPlay playsInline onPlay={() => hush()} />
         )}
-        <button type="button" className="btn" onClick={() => session.completeAdventure()}>Misión completada</button>
+        {card && !card.video && <p className="calm-legend">El video de esta misión llega después.</p>}
+        <button type="button" className="btn" onClick={() => { hush(); session.completeAdventure(); }}>Misión completada</button>
       </div>
     </section>
   );
