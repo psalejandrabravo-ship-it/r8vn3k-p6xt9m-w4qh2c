@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { CLUES, TRANSVERSAL, sourceLabel, statusLabel } from "../config/gameConfig";
+import { CLUES, FINAL_VIDEO, TRANSVERSAL, sourceLabel, statusLabel } from "../config/gameConfig";
 import { TopBar } from "../components/ui";
 import { hush } from "../lib/speech";
 import { useSession } from "../state/sessionStore";
@@ -14,7 +14,7 @@ export function Closing() {
 function Video() {
   const session = useSession();
   const ref = useRef<HTMLVideoElement>(null);
-  const src = session.memory.videoSrc;
+  const src = FINAL_VIDEO || session.memory.videoSrc || "";
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
@@ -26,29 +26,19 @@ function Video() {
   }, [src]);
   return (
     <section className="stack">
-      <TopBar title="Antes de despedirnos" />
-      <p className="lead">Veamos juntos este cierre, si hay un video. Si no hay archivo, seguimos igual.</p>
+      <TopBar title="Video final" />
       {src ? (
-        <video ref={ref} className="video" controls src={src} onPlay={() => hush()} />
+        <>
+          <video ref={ref} className="video" controls src={src} onPlay={() => hush()} />
+          <button type="button" className="btn" onClick={() => { hush(); void ref.current?.play(); }}>Reproducir video</button>
+        </>
       ) : (
         <div className="video-fallback">
-          <p>Aquí irá nuestro video de cierre.</p>
-          <p>Mientras no haya archivo, este panel nos espera.</p>
+          <p>El video final todavía no está listo.</p>
+          <p>Quedará en la configuración del cierre, separado del video de inicio.</p>
         </div>
       )}
-      <label className="btn quiet file">
-        Elegir video en este dispositivo
-        <input
-          type="file"
-          accept="video/*"
-          onChange={(event) => {
-            const file = event.target.files?.[0];
-            if (!file) return;
-            session.setVideo(URL.createObjectURL(file));
-          }}
-        />
-      </label>
-      <button type="button" className="btn" onClick={() => { ref.current?.pause(); session.setScreen("P29"); }}>Continuar</button>
+      <button type="button" className="btn" onClick={() => { ref.current?.pause(); hush(); session.setScreen("P29"); }}>Continuar</button>
     </section>
   );
 }

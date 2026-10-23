@@ -82,6 +82,7 @@ export const CALMA = "CALMA";
 export const PACIENCIA = "PACIENCIA";
 export const CODE = ["4", "7", "2"];
 export const CODE_ICONS: ClueId[] = ["carta", "radio", "huellas"];
+export const FINAL_VIDEO = "";
 
 export const REFLECTIONS = [
   { id: "ayuda", label: "Pedir ayuda a alguien" },

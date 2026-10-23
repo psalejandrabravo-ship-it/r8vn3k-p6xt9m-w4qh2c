@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 148" role="img" aria-label="Insignia de detective">
+  <path d="M60 6 L110 26 V80 C110 112 60 142 60 142 C60 142 10 112 10 80 V26 Z" fill="#e4b85a" stroke="#8a5a2b" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M60 18 L98 34 V78 C98 104 60 128 60 128 C60 128 22 104 22 78 V34 Z" fill="#f3d48a"/>
+  <circle cx="56" cy="68" r="20" fill="none" stroke="#6d4324" stroke-width="7"/>
+  <circle cx="56" cy="68" r="10" fill="#fff8ea"/>
+  <path d="M70 82 L86 100" fill="none" stroke="#6d4324" stroke-width="7" stroke-linecap="round"/>
+</svg>

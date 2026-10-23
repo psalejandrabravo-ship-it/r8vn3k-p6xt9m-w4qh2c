@@ -43,6 +43,7 @@ export interface Persisted {
   missions: Record<MissionId, MissionStatus>;
   cluesFound: Partial<Record<ClueId, { number: number; source: ClueSource }>>;
   helpsUsed: string[];
+  ending: { unlocked: boolean; badge: boolean; completed: boolean };
   activity: ActivityState;
 }
 
@@ -83,6 +84,7 @@ export function freshPersisted(): Persisted {
     missions: { 1: "pending", 2: "pending", 3: "pending" },
     cluesFound: {},
     helpsUsed: [],
+    ending: { unlocked: false, badge: false, completed: false },
     activity: freshActivity(),
   };
 }
@@ -203,6 +205,8 @@ interface Store {
   clearCode: () => void;
   assistCode: (mode: "iconos" | "numeros") => boolean;
   finishMission: (mission: MissionId) => void;
+  unlockBriefcase: () => void;
+  completeAdventure: () => void;
   skipMission: (mission: MissionId) => string;
   seeTool: (id: string) => void;
   chooseTool: (toolId: string) => void;
@@ -563,6 +567,15 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         return true;
       },
       finishMission,
+      unlockBriefcase: () => update((prev) => ({
+        ...prev,
+        ending: { unlocked: true, badge: true, completed: prev.ending?.completed ?? false },
+      })),
+      completeAdventure: () => update((prev) => ({
+        ...prev,
+        ending: { unlocked: true, badge: true, completed: true },
+        screen: "P28",
+      })),
       skipMission: (mission) => {
         const status = persisted.missions[mission];
         if (status === "completed") return "Esta misión ya tiene su pista. Sigue guardada.";
