@@ -20,9 +20,9 @@ const SEQUENCE: Card[] = [
 
 const CONTINUATIONS = [
   { id: "intentar", title: "Intentarlo otra vez", legend: "Puedo volver a construir cuando esté listo.", reply: "Puede volver a intentarlo cuando esté listo. No tiene que salir perfecto.", image: "/assets/mision3/intentar.png", video: "/assets/video/intentar.mp4" },
-  { id: "cambiar", title: "Cambiar la idea", legend: "Puedo probar una base más ancha o una torre más baja.", reply: "Puede probar otra forma de construir. Cambiar el plan también es una opción.", image: "/assets/mision3/cambiar.png", video: "" },
-  { id: "ayuda", title: "Pedir ayuda", legend: "Puedo pedir que construyamos juntos.", reply: "Puede pedir ayuda y construir acompañado. No tiene que resolverlo solo.", image: "/assets/mision3/ayuda.png", video: "" },
-  { id: "despues", title: "Dejarlo para después", legend: "Puedo descansar y volver más tarde.", reply: "Puede descansar y volver más tarde. Hacer una pausa no es fracasar.", image: "/assets/mision3/despues.png", video: "" },
+  { id: "cambiar", title: "Cambiar la idea", legend: "Puedo probar una base más ancha o una torre más baja.", reply: "Puede probar otra forma de construir. Cambiar el plan también es una opción.", image: "/assets/mision3/cambiar.png", video: "/assets/video/cambiar.mp4" },
+  { id: "ayuda", title: "Pedir ayuda", legend: "Puedo pedir que construyamos juntos.", reply: "Puede pedir ayuda y construir acompañado. No tiene que resolverlo solo.", image: "/assets/mision3/ayuda.png", video: "/assets/video/ayuda.mp4" },
+  { id: "despues", title: "Dejarlo para después", legend: "Puedo descansar y volver más tarde.", reply: "Puede descansar y volver más tarde. Hacer una pausa no es fracasar.", image: "/assets/mision3/despues.png", video: "/assets/video/despues.mp4" },
 ];
 
 const WHY = [
@@ -256,7 +256,6 @@ export function Mission3() {
                     )}
                   </div>
                   <span>{option.title}</span>
-                  <small>{option.legend}</small>
                   <button type="button" className="m3-hit" aria-label={option.title} onClick={() => choose(option.id, option.video)} />
                 </div>
               ))}
