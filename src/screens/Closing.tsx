@@ -52,10 +52,7 @@ function Farewell() {
       <h1>Gracias por explorar juntos</h1>
       <p className="lead">A veces algo cuesta. Podemos sentirlo, buscar apoyo y elegir qué hacer después.</p>
       <p className="lead">{TRANSVERSAL}</p>
-      <div className="row">
-        <button type="button" className="btn" onClick={() => session.newVisit()}>Nueva sesión</button>
-        <button type="button" className="btn secondary" onClick={() => session.setScreen("P30")}>Resumen del acompañante</button>
-      </div>
+      <button type="button" className="btn" onClick={() => session.newVisit()}>Nueva sesión</button>
     </section>
   );
 }

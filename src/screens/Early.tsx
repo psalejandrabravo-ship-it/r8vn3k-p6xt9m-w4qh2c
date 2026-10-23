@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { COVER, SUBTITLE, TITLE, statusLabel } from "../config/gameConfig";
+import { COVER, SUBTITLE, TITLE, clueByMission, statusLabel } from "../config/gameConfig";
 import { MAP_AFTER_1, MAP_INTRO } from "../config/case";
 import { NumberBubble } from "../components/Robot";
 import { blip } from "../lib/sound";
@@ -157,8 +157,9 @@ export function MapScreen() {
               onClick={() => openMission(pin.id)}
             >
               <span className="ring" aria-hidden="true" />
-              <b className="stamp">{pin.label}</b>
               {(missions[pin.id] === "completed" || missions[pin.id] === "skipped") && <img className="done-badge" src="/assets/ui/mision-lista.png" alt="" />}
+              <b className="stamp">{pin.label}</b>
+              {(missions[pin.id] === "completed" || missions[pin.id] === "skipped") && <small className="pin-clue">{clueByMission(pin.id).number}</small>}
             </button>
           );
         })}

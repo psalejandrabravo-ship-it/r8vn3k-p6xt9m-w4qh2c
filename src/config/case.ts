@@ -26,12 +26,12 @@ export const STORY: StoryPage[] = [
   {
     id: "construyen",
     image: "/assets/story/pagina-1.png",
-    text: "Dos amigos construían una torre.\nQuerían que llegara muy alto.",
+    text: "Daniel y Ana construían una torre.\nQuerían que llegara muy alto.",
   },
   {
     id: "ultima",
     image: "/assets/story/pagina-2.png",
-    text: "El niño levantó la última pieza.\n—¡Mira! ¡Está casi lista!",
+    text: "Daniel levantó la última pieza.\n—¡Mira, Ana! ¡Está casi lista!",
   },
   {
     id: "cae",
@@ -41,12 +41,12 @@ export const STORY: StoryPage[] = [
   {
     id: "enojo",
     image: "/assets/story/pagina-4.png",
-    text: "Había trabajado mucho.\nSintió la cara roja y apretó las manos.\n¡Estaba muy enojado y frustrado!",
+    text: "Daniel había trabajado mucho.\nSintió la cara roja y apretó las manos.\n¡Estaba muy enojado y frustrado!",
   },
   {
     id: "impulso",
     image: "/assets/story/pagina-5.png",
-    text: "Le dieron ganas de tirar las otras torres,\ngritarle a su amiga y empujarla.",
+    text: "Le dieron ganas de tirar las otras torres,\ngritarle a Ana y empujarla.",
   },
 ];
 
@@ -73,7 +73,7 @@ const DETENER = "/assets/story/detenerse.png";
 const ACTION_OPTIONS: CaseOption[] = [
   {
     id: "gritar",
-    label: "Gritar o empujar a su amiga",
+    label: "Gritar o empujar a Ana",
     image: IMPULSO,
     reply: "Puede sentir mucho enojo. Pero gritarle o empujarla puede asustarla o lastimarla. Busquemos una forma de expresarlo sin lastimar.",
     next: "retry",

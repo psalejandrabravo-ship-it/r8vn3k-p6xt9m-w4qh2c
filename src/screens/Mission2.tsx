@@ -19,8 +19,9 @@ export function Mission2() {
   const [phase, setPhase] = useState<Phase>(done ? "close" : learned ? "ways" : "word");
   const [note, setNote] = useState(CALM_INTRO);
   const [waysHint, setWaysHint] = useState<string | null>(null);
+  const [reflect, setReflect] = useState(false);
   const number = clueByMission(2).number;
-  const say = phase === "word" ? note : phase === "explain" ? WAYS_INTRO : phase === "ways" ? waysHint ?? undefined : phase === "number" ? `El segundo número es ${number}. Yo lo recuerdo.` : CLOSE_2;
+  const say = phase === "word" ? note : phase === "explain" ? WAYS_INTRO : phase === "ways" ? waysHint ?? (reflect ? "¿Cuál de estas formas te ayuda a detenerte y calmarte? ¿Hay alguna otra que también te sirve?" : undefined) : phase === "number" ? `El segundo número es ${number}. Yo lo recuerdo.` : CLOSE_2;
   const pose: RobotPose = phase === "number" ? "descubrimiento" : note !== CALM_INTRO && phase === "word" ? "acompañando" : "pensando";
 
   useEffect(() => {
@@ -50,7 +51,7 @@ export function Mission2() {
           onTap={phase === "explain" ? () => setPhase("ways") : phase === "number" ? () => setPhase("close") : phase === "close" ? () => session.setScreen("P06") : undefined}
         />
         {phase === "ways" ? (
-          <CalmLearn step={2} number={number} revealed={done} onContinue={() => setPhase("number")} />
+          <CalmLearn step={2} number={number} revealed={done} onAllSeen={() => setReflect(true)} onContinue={() => setPhase("number")} />
         ) : phase === "explain" ? (
           <div className="dossier calm-note">
             <img src="/assets/illustrations/cards/calma.jpg" alt="" />

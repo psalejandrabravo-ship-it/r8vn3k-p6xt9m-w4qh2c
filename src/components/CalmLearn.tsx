@@ -16,11 +16,13 @@ const CARDS = [
 export function CalmLearn({
   revealed,
   onContinue,
+  onAllSeen,
 }: {
   step: 1 | 2 | 3;
   number: number;
   revealed?: boolean;
   onContinue: () => void;
+  onAllSeen?: () => void;
 }) {
   const session = useSession();
   const [open, setOpen] = useState<string[]>([]);
@@ -28,8 +30,8 @@ export function CalmLearn({
   const card = CARDS.find((item) => item.id === focus);
   const showNote = revealed || open.length >= 3;
   useEffect(() => {
-    session.setFeedback("");
-  }, []);
+    if (open.length === CARDS.length) onAllSeen?.();
+  }, [open.length, onAllSeen]);
   return (
     <div className="learn-board">
       <p className="riddle">¿Qué puedo hacer para encontrar la calma?</p>

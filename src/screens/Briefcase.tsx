@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { clueByMission, type MissionId } from "../config/gameConfig";
 import { Hud } from "../components/ui";
 import { Robot } from "../components/Robot";
-import { blip } from "../lib/sound";
+import { blip, chime } from "../lib/sound";
 import { useSession } from "../state/sessionStore";
 
 const INTRO = "¡Tenemos las tres pistas! Introduce los números en el orden en que los encontramos. Si necesitas recordarlos, tócame.";
@@ -69,7 +69,9 @@ function CaseLock() {
   const [phase, setPhase] = useState<"code" | "opening" | "open">(opened ? "open" : "code");
   const [digits, setDigits] = useState("");
   const [wrong, setWrong] = useState(false);
+  const [marked, setMarked] = useState(false);
   const [hints, setHints] = useState(false);
+  const [flash, setFlash] = useState(false);
   const [glow, setGlow] = useState(false);
   const [showBadge, setShowBadge] = useState(opened);
 
@@ -96,7 +98,8 @@ function CaseLock() {
     blip(session.persisted.sounds);
     if (next.length < 3) return;
     if (next === target) {
-      setPhase("opening");
+      setMarked(true);
+      chime(session.persisted.sounds);
       setHints(false);
       if (reduce) {
         setPhase("open");
@@ -104,20 +107,22 @@ function CaseLock() {
         session.unlockBriefcase();
         return;
       }
-      window.setTimeout(() => setPhase("open"), 380);
-      window.setTimeout(() => setGlow(true), 620);
+      window.setTimeout(() => setFlash(true), 420);
+      window.setTimeout(() => { setPhase("opening"); setFlash(false); }, 900);
+      window.setTimeout(() => setPhase("open"), 1280);
+      window.setTimeout(() => setGlow(true), 1500);
       window.setTimeout(() => {
         setGlow(false);
         setShowBadge(true);
         session.unlockBriefcase();
-      }, 1300);
+      }, 2100);
       return;
     }
     setWrong(true);
   };
 
   const erase = () => {
-    if (phase !== "code") return;
+    if (phase !== "code" || marked) return;
     setDigits((value) => value.slice(0, -1));
     setWrong(false);
   };
@@ -143,27 +148,27 @@ function CaseLock() {
         <Robot pose={phase === "code" ? "señalando" : "descubrimiento"} say={say} onTap={() => setHints((value) => !value)} />
         <p className="case-tap">Tócame para ver las pistas.</p>
         {hints && (
-          <div className="clue-pop" role="dialog" aria-label="Números de las misiones">
+          <div className="thought case-thought" role="dialog" aria-label="Números de las misiones">
             {clues.map((item) => (
-              <p key={item.mission}><b>Misión {item.mission}</b><span>{item.number}</span></p>
+              <b key={item.mission} className="known" aria-label={`Misión ${item.mission}: ${item.number}`}>{item.number}</b>
             ))}
-            <button type="button" className="text-arrow" onClick={() => setHints(false)}>Cerrar</button>
           </div>
         )}
         <div className={`case-stage is-${phase}`}>
           <img className="case-pic closed" src="/assets/ui/maletin-cerrado.png" alt="" />
           <img className="case-pic open" src="/assets/ui/maletin-abierto.png" alt={phase === "open" ? "Maletín abierto" : ""} />
           {phase === "code" && (
-            <div className="code-slots" aria-label="Código del maletín">
+            <div className={`code-slots${marked ? " is-correct" : ""}`} aria-label="Código del maletín">
               {[0, 1, 2].map((index) => (
                 <b key={index} aria-label={digits[index] ? `Dígito ${index + 1}: ${digits[index]}` : `Espacio ${index + 1} vacío`}>{digits[index] ?? ""}</b>
               ))}
             </div>
           )}
+          {flash && !reduce && <span className="case-flash" aria-hidden="true" />}
           {glow && !reduce && <span className="case-glow" aria-hidden="true" />}
           {showBadge && (
             <button type="button" className="badge-hit" aria-label="Insignia de detective" onClick={() => session.setScreen("P25")}>
-              <img src="/assets/ui/insignia.svg" alt="" />
+              <img src="/assets/ui/insignia-detective.png" alt="" />
             </button>
           )}
           {showBadge && <p className="badge-legend">Toca tu insignia.</p>}
@@ -217,10 +222,8 @@ function Discoveries() {
         {card && (
           <article className="learn-detail">
             {card.text.map((line) => <p key={line}>{line}</p>)}
-            <button type="button" className="text-arrow" onClick={() => setOpen(null)}>Cerrar</button>
           </article>
         )}
-        <p className="learn-close">Puedo sentir enojo, hacer una pausa y elegir qué hacer sin lastimar.</p>
         <button type="button" className="btn" onClick={() => session.completeAdventure()}>Misión completada</button>
       </div>
     </section>

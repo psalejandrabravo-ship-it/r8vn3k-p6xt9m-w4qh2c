@@ -119,15 +119,36 @@ export function Mission3() {
 
   const ordered = orderNote === ORDER_OK;
   const goAfterOrder = () => setPhase(older ? "why" : "choices");
+  const reorder = () => {
+    setPool(mix(SEQUENCE));
+    setSlots([null, null, null, null]);
+    setSelected(null);
+    setOrderNote(null);
+    setHinted(false);
+  };
+  const lift = (id: string) => {
+    const card = SEQUENCE.find((item) => item.id === id);
+    if (!card || !slots.some((slot) => slot?.id === id)) return;
+    setSlots(slots.map((slot) => (slot?.id === id ? null : slot)));
+    setPool(pool.some((item) => item.id === id) ? pool : [...pool, card]);
+    setSelected(null);
+    setOrderNote(null);
+  };
 
   return (
     <section className={`play story-play guide-play mission-3 phase-${phase}`}>
-      <Hud title="El caso de las pistas desordenadas" onRepeat={repeat} onHint={phase === "order" ? () => setHinted(true) : undefined} />
+      <Hud title="El caso de las pistas desordenadas" onRepeat={phase === "order" ? reorder : repeat} repeatLabel={phase === "order" ? "Reordenar" : "Repetir"} onHint={phase === "order" ? () => setHinted(true) : undefined} />
       <div className="story-layout">
-        <Robot pose={pose} say={say} bubble={phase === "number" || phase === "close"} fresh={phase === "number" ? number : undefined} onTap={phase === "number" ? () => setPhase("close") : phase === "close" ? () => session.setScreen("P06") : undefined} />
+        <Robot pose={pose} say={say} bubble={phase === "number"} fresh={phase === "number" ? number : undefined} onTap={phase === "number" ? () => session.setScreen("P06") : undefined} />
         {phase === "order" && (
           <div className="m3-board">
-            <div className="m3-pool" aria-label="Pistas desordenadas">
+            <div
+              className="m3-pool"
+              aria-label="Pistas desordenadas"
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={(event) => { event.preventDefault(); lift(event.dataTransfer.getData("text/plain") || selected || ""); }}
+              onClick={(event) => { if (event.target === event.currentTarget && selected) lift(selected); }}
+            >
               {pool.map((card) => (
                 <button
                   key={card.id}
@@ -137,6 +158,8 @@ export function Mission3() {
                   aria-pressed={selected === card.id}
                   aria-label={card.label}
                   onDragStart={(event) => { event.dataTransfer.setData("text/plain", card.id); setSelected(card.id); }}
+                  onDragOver={(event) => event.preventDefault()}
+                  onDrop={(event) => { event.preventDefault(); event.stopPropagation(); lift(event.dataTransfer.getData("text/plain") || selected || ""); }}
                   onClick={() => setSelected(selected === card.id ? null : card.id)}
                 >
                   <img src={card.image} alt="" />
@@ -150,9 +173,11 @@ export function Mission3() {
                   key={index}
                   type="button"
                   className={`m3-slot${card && selected === card.id ? " is-selected" : ""}${ordered ? " is-correct" : ""}`}
+                  draggable={Boolean(card)}
                   aria-label={`Espacio ${index + 1}${card ? `, ${card.label}` : ", vacío"}`}
+                  onDragStart={(event) => { if (!card) return; event.dataTransfer.setData("text/plain", card.id); setSelected(card.id); }}
                   onDragOver={(event) => event.preventDefault()}
-                  onDrop={(event) => { event.preventDefault(); place(index, event.dataTransfer.getData("text/plain") || selected); }}
+                  onDrop={(event) => { event.preventDefault(); event.stopPropagation(); place(index, event.dataTransfer.getData("text/plain") || selected); }}
                   onClick={() => place(index)}
                 >
                   <b>{index + 1}</b>
@@ -204,14 +229,9 @@ export function Mission3() {
         {phase === "number" && (
           <div className="m3-board">
             <p className="found-number">{number}</p>
-            <button type="button" className="advance-arrow" aria-label="Seguir" onClick={() => setPhase("close")}>
+            <button type="button" className="advance-arrow" aria-label="Volver al mapa" onClick={() => session.setScreen("P06")}>
               <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 10 L34 24 L16 38" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
-          </div>
-        )}
-        {phase === "close" && (
-          <div className="m3-board">
-            <button type="button" className="btn map-return" onClick={() => session.setScreen("P06")}>Volver al mapa</button>
           </div>
         )}
       </div>
