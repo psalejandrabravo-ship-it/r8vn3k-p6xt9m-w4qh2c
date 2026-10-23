@@ -21,13 +21,13 @@ const LEARNING = [
     id: 2,
     label: "Misión 2. Pruebo algo que me ayude",
     image: "/assets/cierre/mision-2.png",
-    video: "",
+    video: "/assets/video/mision-2.mp4",
   },
   {
     id: 3,
     label: "Misión 3. Elijo cómo continuar",
     image: "/assets/cierre/mision-3.png",
-    video: "",
+    video: "/assets/video/mision-3.mp4",
   },
 ];
 
@@ -155,10 +155,9 @@ function CaseLock() {
           )}
           {flash && !reduce && <span className="case-flash" aria-hidden="true" />}
           {glow && !reduce && <span className="case-glow" aria-hidden="true" />}
+          {showBadge && <img className="badge-layer" src="/assets/ui/insignia-detective.png" alt="" />}
           {showBadge && (
-            <button type="button" className="badge-hit" aria-label="Insignia de detective" onClick={() => session.setScreen("P25")}>
-              <img src="/assets/ui/insignia-detective.png" alt="" />
-            </button>
+            <button type="button" className="badge-hit" aria-label="Insignia de detective" onClick={() => session.setScreen("P25")} />
           )}
           {showBadge && <p className="badge-legend">Toca tu insignia.</p>}
         </div>

@@ -1276,13 +1276,16 @@ body.reduce .m3-card, body.reduce .m3-slot { transition: none; }
 }
 @keyframes case-flash { 0% { opacity: 0; } 35% { opacity: 1; } 100% { opacity: 0; } }
 .case-finale .case-thought { left: 9%; right: auto; bottom: 28%; top: auto; translate: 0 0; z-index: 7; }
-.badge-hit {
-  position: absolute; left: 50%; top: 63%; translate: -50% -50%; z-index: 3;
-  width: 22%; aspect-ratio: 1; border: 0; background: transparent; padding: 0; cursor: pointer;
+.badge-layer {
+  position: absolute; inset: 0; width: 100%; height: 100%; z-index: 3;
+  object-fit: contain; pointer-events: none;
 }
-.badge-hit img { width: 100%; height: 100%; object-fit: contain; }
+.badge-hit {
+  position: absolute; left: 31.3%; top: 43.1%; width: 30.7%; height: 34.8%; z-index: 4;
+  border: 0; background: transparent; padding: 0; cursor: pointer;
+}
 .badge-legend {
-  position: absolute; left: 50%; top: 80%; translate: -50% 0; z-index: 3; margin: 0;
+  position: absolute; left: 50%; top: 84%; translate: -50% 0; z-index: 3; margin: 0;
   background: rgba(255, 250, 243, 0.92); color: #2b2155; font-weight: 800;
   border-radius: 999px; padding: 4px 10px;
 }
