@@ -907,9 +907,15 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
   left: -14px; right: auto; bottom: 18px;
   border-top-color: transparent; border-left-color: transparent; border-right-color: #fffaf3;
 }
-.case-play.phase-questions:not(.is-reply):not(.is-bridge) .case-ask { padding: 4% 8% 4%; align-items: center; justify-content: flex-start; gap: 10px; }
+.case-play.phase-questions:not(.is-reply):not(.is-bridge) .case-ask {
+  padding: 1% 8% 2%; align-items: center; justify-content: flex-start; gap: 0;
+}
+.case-play.phase-questions:not(.is-reply):not(.is-bridge) .reading.ask { margin-top: 0; }
+.case-play.phase-questions:not(.is-reply):not(.is-bridge) .action-cards,
+.case-play.phase-questions:not(.is-reply):not(.is-bridge) .visual-choices { margin-top: 10cqh; }
+.case-play.phase-questions:not(.is-reply):not(.is-bridge) .tap-legend { margin-top: 14px; }
 .case-play .choice { display: flex; align-items: center; gap: 12px; text-align: left; }
-.choice-face { width: 64px; height: 64px; object-fit: contain; flex: 0 0 auto; }
+.choice-face { width: 72px; height: 72px; object-fit: contain; flex: 0 0 auto; }
 .case-play .action-card img { width: 100%; height: auto; max-height: 22cqh; object-fit: contain; background: transparent; filter: drop-shadow(0 12px 10px rgba(20, 12, 28, 0.28)); }
 .case-play.phase-questions:not(.is-reply):not(.is-bridge) .visual-choices { width: min(100%, 640px); }
 .case-play.phase-open,
@@ -1179,7 +1185,16 @@ body.reduce .guide-play .robot-guide { transition: none; }
 .mission-3.phase-chosen .m3-board,
 .mission-3.phase-number .m3-board,
 .mission-3.phase-close .m3-board { justify-content: flex-start; padding-top: 8%; }
-.m3-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.m3-slot.is-correct { border-color: #2f8f4e; background: rgba(210, 236, 196, 0.72); }
+.m3-ticket {
+  margin: 0; padding: 8px 16px; background: #f6e7a8; color: #1d5c32;
+  border: 3px dashed #2f8f4e; border-radius: 6px; font-weight: 900; rotate: -2deg;
+}
+.mission-3.phase-choices .m3-board { justify-content: flex-start; padding-top: 4%; padding-bottom: 14%; }
+.mission-3.phase-choices .m3-options { margin-top: 2cqh; }
+.mission-3.phase-choices .m3-card small {
+  background: rgba(255, 250, 243, 0.92); border-radius: 8px; padding: 2px 6px;
+}
 body.reduce .m3-card, body.reduce .m3-slot { transition: none; }
 @media (max-width: 800px) {
   .m3-pool, .m3-slots, .m3-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }

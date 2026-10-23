@@ -14,8 +14,8 @@ type Card = { id: string; label: string; image: string };
 const SEQUENCE: Card[] = [
   { id: "cae", label: "La torre se cayó.", image: "/assets/story/pagina-3.png" },
   { id: "enojo", label: "Me siento enojado y frustrado.", image: "/assets/story/pagina-4.png" },
-  { id: "detengo", label: "Me detengo y pruebo algo que me ayude.", image: "/assets/mision3/me-detengo.png" },
-  { id: "decido", label: "Pienso y decido qué hacer.", image: "/assets/mision3/decido.png" },
+  { id: "detengo", label: "Me detengo e intento calmarme un poco.", image: "/assets/mision3/me-detengo.png" },
+  { id: "decido", label: "Pienso y busco qué hacer.", image: "/assets/mision3/decido.png" },
 ];
 
 const CONTINUATIONS = [
@@ -32,14 +32,13 @@ const WHY = [
 ];
 
 const INTRO = "Agentes, las pistas de la torre quedaron desordenadas. Ordenemos lo que pasó y descubramos cómo puede continuar la historia.";
-const ORDER_PROMPT = "Ordena las cuatro pistas. Toca una y después un espacio, o arrástrala.";
 const ORDER_HINT = "Mira qué pasó primero con la torre. Después viene lo que sintió.";
 const ORDER_RETRY = "Todavía hay pistas por ordenar. Miremos de nuevo: ¿qué pasó primero con la torre?";
 const ORDER_NEXT = "Después de sentir frustración, ¿qué puede ayudar antes de decidir?";
 const ORDER_OK = "¡Ordenamos las pistas! La torre se cayó, apareció la frustración y el personaje hizo una pausa para poder elegir qué hacer.";
 const WHY_Q = "¿Por qué puede ayudar hacer una pausa antes de decidir?";
-const BRIDGE = "No hace falta estar completamente tranquilo para elegir un siguiente paso. Podemos intentarlo otra vez, cambiar el plan, pedir ayuda o dejarlo para después.";
-const ASK = "¿Cómo te gustaría que continuara esta historia?";
+const BRIDGE = "No hace falta estar completamente tranquilo para decidir qué hacer. Una pausa ayuda a no actuar por impulso.";
+const ASK = "¿Qué podríamos hacer cuando nos enfrentamos a la frustración?";
 
 function mix(cards: Card[]) {
   const next = [...cards];
@@ -55,7 +54,7 @@ export function Mission3() {
   const session = useSession();
   const older = session.persisted.level === "detectives";
   const number = clueByMission(3).number;
-  const [phase, setPhase] = useState<Phase>("intro");
+  const [phase, setPhase] = useState<Phase>("order");
   const [pool, setPool] = useState<Card[]>(() => mix(SEQUENCE));
   const [slots, setSlots] = useState<(Card | null)[]>([null, null, null, null]);
   const [selected, setSelected] = useState<string | null>(null);
@@ -64,7 +63,6 @@ export function Mission3() {
   const [whyNote, setWhyNote] = useState<string | null>(null);
   const [picked, setPicked] = useState<string | null>(null);
   const choice = CONTINUATIONS.find((item) => item.id === picked);
-  const full = slots.every(Boolean);
   const othersReady = Boolean(session.persisted.cluesFound.carta && session.persisted.cluesFound.radio);
   const missionsDone = ([1, 2, 3] as const).every((id) => {
     const status = session.persisted.missions[id];
@@ -72,10 +70,9 @@ export function Mission3() {
   });
 
   const say = phase === "intro" ? INTRO
-    : phase === "order" ? (hinted ? ORDER_HINT : orderNote ?? ORDER_PROMPT)
+    : phase === "order" ? (hinted ? ORDER_HINT : orderNote ?? INTRO)
     : phase === "why" ? (whyNote ?? WHY_Q)
-    : phase === "bridge" ? BRIDGE
-    : phase === "choices" ? ASK
+    : phase === "choices" ? BRIDGE
     : phase === "chosen" ? choice?.reply
     : phase === "number"
       ? (othersReady
@@ -110,31 +107,24 @@ export function Mission3() {
     setPool(nextPool);
     setSelected(null);
     setHinted(false);
-    setOrderNote(null);
+    if (nextSlots.every(Boolean)) {
+      const correct = nextSlots.every((item, index) => item?.id === SEQUENCE[index].id);
+      const started = nextSlots[0]?.id === "cae" && nextSlots[1]?.id === "enojo";
+      setOrderNote(correct ? ORDER_OK : started ? ORDER_NEXT : ORDER_RETRY);
+    } else {
+      setOrderNote(null);
+    }
     blip(session.persisted.sounds);
   };
 
-  const review = () => {
-    const correct = slots.every((card, index) => card?.id === SEQUENCE[index].id);
-    const started = slots[0]?.id === "cae" && slots[1]?.id === "enojo";
-    setOrderNote(correct ? ORDER_OK : started ? ORDER_NEXT : ORDER_RETRY);
-    setHinted(false);
-    blip(session.persisted.sounds);
-  };
-
-  const goAfterOrder = () => setPhase(older ? "why" : "bridge");
   const ordered = orderNote === ORDER_OK;
+  const goAfterOrder = () => setPhase(older ? "why" : "choices");
 
   return (
     <section className={`play story-play guide-play mission-3 phase-${phase}`}>
       <Hud title="El caso de las pistas desordenadas" onRepeat={repeat} onHint={phase === "order" ? () => setHinted(true) : undefined} />
       <div className="story-layout">
         <Robot pose={pose} say={say} bubble={phase === "number" || phase === "close"} fresh={phase === "number" ? number : undefined} onTap={phase === "number" ? () => setPhase("close") : phase === "close" ? () => session.setScreen("P06") : undefined} />
-        {phase === "intro" && (
-          <div className="m3-board">
-            <button type="button" className="btn" onClick={() => setPhase("order")}>Ordenar las pistas</button>
-          </div>
-        )}
         {phase === "order" && (
           <div className="m3-board">
             <div className="m3-pool" aria-label="Pistas desordenadas">
@@ -159,7 +149,7 @@ export function Mission3() {
                 <button
                   key={index}
                   type="button"
-                  className={card && selected === card.id ? "m3-slot is-selected" : "m3-slot"}
+                  className={`m3-slot${card && selected === card.id ? " is-selected" : ""}${ordered ? " is-correct" : ""}`}
                   aria-label={`Espacio ${index + 1}${card ? `, ${card.label}` : ", vacío"}`}
                   onDragOver={(event) => event.preventDefault()}
                   onDrop={(event) => { event.preventDefault(); place(index, event.dataTransfer.getData("text/plain") || selected); }}
@@ -172,7 +162,7 @@ export function Mission3() {
               ))}
             </div>
             <div className="m3-actions">
-              <button type="button" className="btn" disabled={!full} onClick={review}>Revisar el orden</button>
+              {ordered && <p className="m3-ticket">¡Bien hecho!</p>}
               {ordered && <button type="button" className="btn" onClick={goAfterOrder}>Continuar</button>}
             </div>
           </div>
@@ -185,12 +175,7 @@ export function Mission3() {
                 <button key={option.id} type="button" className="choice" onClick={() => { setWhyNote(option.reply); blip(session.persisted.sounds); }}>{option.label}</button>
               ))}
             </div>
-            {whyNote && <button type="button" className="btn" onClick={() => setPhase("bridge")}>Continuar</button>}
-          </div>
-        )}
-        {phase === "bridge" && (
-          <div className="m3-board">
-            <button type="button" className="btn" onClick={() => setPhase("choices")}>Ver las continuaciones</button>
+            {whyNote && <button type="button" className="btn" onClick={() => setPhase("choices")}>Continuar</button>}
           </div>
         )}
         {phase === "choices" && (
