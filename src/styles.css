@@ -1199,8 +1199,25 @@ body.reduce .guide-play .robot-guide { transition: none; }
   margin: 0; padding: 8px 16px; background: #f6e7a8; color: #1d5c32;
   border: 3px dashed #2f8f4e; border-radius: 6px; font-weight: 900; rotate: -2deg;
 }
-.mission-3.phase-choices .m3-board { justify-content: flex-start; padding-top: 4%; padding-bottom: 14%; }
-.mission-3.phase-choices .m3-options { margin-top: 2cqh; }
+.mission-3.phase-why .reading.ask {
+  font-size: clamp(1.7rem, 3.6cqw, 2.5rem); font-weight: 900; line-height: 1.25;
+}
+.mission-3.phase-why .visual-choices { width: min(100%, 760px); }
+.mission-3.phase-why .choice { font-size: 1.2rem; min-height: 68px; transition: background 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease; }
+.mission-3 .choice.is-right { background: #d7f0c4; border-color: #2f8f4e; color: #1d5c32; box-shadow: 0 0 0 3px #2f8f4e; }
+.mission-3 .choice.is-soft { background: #fff6e4; border-color: #c9a15b; }
+.m3-options { grid-template-columns: repeat(2, minmax(0, 1fr)); width: min(100%, 640px); gap: 16px; }
+.mission-3.phase-choices .m3-card { position: relative; }
+.m3-frame { position: relative; width: 100%; aspect-ratio: 1; border-radius: 16px; overflow: hidden; }
+.mission-3.phase-choices .m3-frame img,
+.mission-3.phase-choices .m3-frame video {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+}
+.mission-3.phase-choices .m3-frame video { opacity: 0; }
+.mission-3.phase-choices .m3-frame video.is-on { opacity: 1; }
+.m3-hit { position: absolute; inset: 0; border: 0; background: transparent; padding: 0; }
+body.reduce .mission-3 .choice { transition: none; }
+.mission-3.phase-choices .m3-board { justify-content: flex-start; padding-top: 2%; padding-bottom: 8%; }
 .mission-3.phase-choices .m3-card small {
   background: rgba(255, 250, 243, 0.92); border-radius: 8px; padding: 2px 6px;
 }

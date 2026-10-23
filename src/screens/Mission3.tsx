@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CLOSE_3, CLOSE_3_CASE, CLOSE_3_MORE } from "../config/case";
 import { clueByMission } from "../config/gameConfig";
 import { Hud } from "../components/ui";
 import { Robot, type RobotPose } from "../components/Robot";
 import { blip } from "../lib/sound";
-import { speak } from "../lib/speech";
+import { speak, hush } from "../lib/speech";
 import { useSession } from "../state/sessionStore";
 
 type Phase = "intro" | "order" | "why" | "bridge" | "choices" | "chosen" | "number" | "close";
@@ -19,10 +19,10 @@ const SEQUENCE: Card[] = [
 ];
 
 const CONTINUATIONS = [
-  { id: "intentar", title: "Intentarlo otra vez", legend: "Puedo volver a construir cuando esté listo.", reply: "Puede volver a intentarlo cuando esté listo. No tiene que salir perfecto.", image: "/assets/mision3/intentar.png" },
-  { id: "cambiar", title: "Cambiar la idea", legend: "Puedo probar una base más ancha o una torre más baja.", reply: "Puede probar otra forma de construir. Cambiar el plan también es una opción.", image: "/assets/mision3/cambiar.png" },
-  { id: "ayuda", title: "Pedir ayuda", legend: "Puedo pedir que construyamos juntos.", reply: "Puede pedir ayuda y construir acompañado. No tiene que resolverlo solo.", image: "/assets/mision3/ayuda.png" },
-  { id: "despues", title: "Dejarlo para después", legend: "Puedo descansar y volver más tarde.", reply: "Puede descansar y volver más tarde. Hacer una pausa no es fracasar.", image: "/assets/mision3/despues.png" },
+  { id: "intentar", title: "Intentarlo otra vez", legend: "Puedo volver a construir cuando esté listo.", reply: "Puede volver a intentarlo cuando esté listo. No tiene que salir perfecto.", image: "/assets/mision3/intentar.png", video: "/assets/video/intentar.mp4" },
+  { id: "cambiar", title: "Cambiar la idea", legend: "Puedo probar una base más ancha o una torre más baja.", reply: "Puede probar otra forma de construir. Cambiar el plan también es una opción.", image: "/assets/mision3/cambiar.png", video: "" },
+  { id: "ayuda", title: "Pedir ayuda", legend: "Puedo pedir que construyamos juntos.", reply: "Puede pedir ayuda y construir acompañado. No tiene que resolverlo solo.", image: "/assets/mision3/ayuda.png", video: "" },
+  { id: "despues", title: "Dejarlo para después", legend: "Puedo descansar y volver más tarde.", reply: "Puede descansar y volver más tarde. Hacer una pausa no es fracasar.", image: "/assets/mision3/despues.png", video: "" },
 ];
 
 const WHY = [
@@ -60,8 +60,11 @@ export function Mission3() {
   const [selected, setSelected] = useState<string | null>(null);
   const [orderNote, setOrderNote] = useState<string | null>(null);
   const [hinted, setHinted] = useState(false);
+  const [whyId, setWhyId] = useState<string | null>(null);
   const [whyNote, setWhyNote] = useState<string | null>(null);
   const [picked, setPicked] = useState<string | null>(null);
+  const [playing, setPlaying] = useState<string | null>(null);
+  const videos = useRef<Record<string, HTMLVideoElement | null>>({});
   const choice = CONTINUATIONS.find((item) => item.id === picked);
   const othersReady = Boolean(session.persisted.cluesFound.carta && session.persisted.cluesFound.radio);
   const missionsDone = ([1, 2, 3] as const).every((id) => {
@@ -72,8 +75,7 @@ export function Mission3() {
   const say = phase === "intro" ? INTRO
     : phase === "order" ? (hinted ? ORDER_HINT : orderNote ?? INTRO)
     : phase === "why" ? (whyNote ?? WHY_Q)
-    : phase === "choices" ? BRIDGE
-    : phase === "chosen" ? choice?.reply
+    : phase === "choices" ? (choice && !choice.video ? choice.reply : BRIDGE)
     : phase === "number"
       ? (othersReady
         ? "¡Encontramos el tercer número! Ya tenemos las pistas para abrir el maletín."
@@ -117,6 +119,31 @@ export function Mission3() {
     blip(session.persisted.sounds);
   };
 
+  const choose = (id: string, src: string) => {
+    setPicked(id);
+    blip(session.persisted.sounds);
+    CONTINUATIONS.forEach((item) => {
+      const node = videos.current[item.id];
+      if (!node || item.id === id) return;
+      node.pause();
+      node.currentTime = 0;
+    });
+    if (!src) {
+      setPlaying(null);
+      return;
+    }
+    hush();
+    const node = videos.current[id];
+    if (!node) return;
+    if (playing === id && !node.paused) {
+      node.pause();
+      setPlaying(null);
+      return;
+    }
+    if (node.ended) node.currentTime = 0;
+    void node.play();
+    setPlaying(id);
+  };
   const ordered = orderNote === ORDER_OK;
   const goAfterOrder = () => setPhase(older ? "why" : "choices");
   const reorder = () => {
@@ -197,7 +224,14 @@ export function Mission3() {
             <p className="reading ask">{WHY_Q}</p>
             <div className="visual-choices">
               {WHY.map((option) => (
-                <button key={option.id} type="button" className="choice" onClick={() => { setWhyNote(option.reply); blip(session.persisted.sounds); }}>{option.label}</button>
+                <button
+                  key={option.id}
+                  type="button"
+                  className={`choice${whyId && option.id === "pensar" ? " is-right" : ""}${whyId === option.id && option.id !== "pensar" ? " is-soft" : ""}`}
+                  onClick={() => { setWhyId(option.id); setWhyNote(option.reply); blip(session.persisted.sounds); }}
+                >
+                  {option.label}
+                </button>
               ))}
             </div>
             {whyNote && <button type="button" className="btn" onClick={() => setPhase("choices")}>Continuar</button>}
@@ -208,13 +242,26 @@ export function Mission3() {
             <p className="reading ask">{ASK}</p>
             <div className="m3-options">
               {CONTINUATIONS.map((option) => (
-                <button key={option.id} type="button" className="m3-card" aria-label={option.title} onClick={() => { setPicked(option.id); setPhase("chosen"); blip(session.persisted.sounds); }}>
-                  <img src={option.image} alt="" />
+                <div key={option.id} className={picked === option.id ? "m3-card is-selected" : "m3-card"}>
+                  <div className="m3-frame">
+                    <img src={option.image} alt="" />
+                    {option.video && (
+                      <video
+                        ref={(node) => { videos.current[option.id] = node; }}
+                        className={playing === option.id ? "is-on" : ""}
+                        src={option.video}
+                        playsInline
+                        onEnded={() => setPlaying((current) => (current === option.id ? null : current))}
+                      />
+                    )}
+                  </div>
                   <span>{option.title}</span>
                   <small>{option.legend}</small>
-                </button>
+                  <button type="button" className="m3-hit" aria-label={option.title} onClick={() => choose(option.id, option.video)} />
+                </div>
               ))}
             </div>
+            <button type="button" className="btn" onClick={() => { hush(); setPhase("number"); }}>Continuar</button>
           </div>
         )}
         {phase === "chosen" && choice && (
