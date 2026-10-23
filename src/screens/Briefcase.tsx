@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { clueByMission, type MissionId } from "../config/gameConfig";
 import { Hud } from "../components/ui";
 import { Robot } from "../components/Robot";
@@ -185,39 +185,57 @@ function CaseLock() {
 
 function Discoveries() {
   const session = useSession();
+  const videos = useRef<Record<number, HTMLVideoElement | null>>({});
   const [playing, setPlaying] = useState<number | null>(null);
-  const card = LEARNING.find((item) => item.id === playing);
-  useEffect(() => {
-    if (playing) hush();
-  }, [playing]);
+
+  const play = (id: number, src: string) => {
+    if (!src) return;
+    hush();
+    LEARNING.forEach((item) => {
+      const node = videos.current[item.id];
+      if (!node || item.id === id) return;
+      node.pause();
+      node.currentTime = 0;
+    });
+    const node = videos.current[id];
+    if (!node) return;
+    if (playing === id && !node.paused) {
+      node.pause();
+      setPlaying(null);
+      return;
+    }
+    node.currentTime = node.ended ? 0 : node.currentTime;
+    void node.play();
+    setPlaying(id);
+  };
+
   return (
     <section className="play case-finale discoveries">
       <Hud title="Lo que descubrimos" />
       <div className="finale-body learn">
-        {playing == null && (
-          <Robot pose="acompañando" say="Ser detective también es descubrir qué sentimos y qué podemos hacer. Toca una misión para ver su video." />
-        )}
+        <Robot pose="acompañando" say="Ser detective también es descubrir qué sentimos y qué podemos hacer. Toca una misión para ver su video." />
         <div className="learn-row">
           {LEARNING.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={playing === item.id ? "learn-card on" : "learn-card"}
-              aria-pressed={playing === item.id}
-              aria-label={item.video ? `${item.label}. Reproducir video` : item.label}
-              onClick={() => {
-                hush();
-                setPlaying(playing === item.id ? null : item.id);
-              }}
-            >
+            <div key={item.id} className={playing === item.id ? "learn-card on" : "learn-card"}>
               <img src={item.image} alt="" />
-            </button>
+              {item.video && (
+                <video
+                  ref={(node) => { videos.current[item.id] = node; }}
+                  className={playing === item.id ? "is-on" : ""}
+                  src={item.video}
+                  playsInline
+                  onPlay={() => hush()}
+                  onEnded={() => setPlaying((current) => (current === item.id ? null : current))}
+                />
+              )}
+              <button
+                type="button"
+                aria-label={item.video ? `${item.label}. Reproducir video` : item.label}
+                onClick={() => play(item.id, item.video)}
+              />
+            </div>
           ))}
         </div>
-        {card?.video && (
-          <video key={card.video} className="learn-video" src={card.video} controls autoPlay playsInline onPlay={() => hush()} />
-        )}
-        {card && !card.video && <p className="calm-legend">El video de esta misión llega después.</p>}
         <button type="button" className="btn" onClick={() => { hush(); session.completeAdventure(); }}>Misión completada</button>
       </div>
     </section>
