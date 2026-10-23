@@ -918,7 +918,9 @@ body.reduce .popout, body.reduce .leaf.next, body.reduce .leaf.prev { animation:
 .case-play.phase-questions:not(.is-reply):not(.is-bridge) .reading.ask { margin-top: 0; }
 .case-play.phase-questions:not(.is-reply):not(.is-bridge) .action-cards,
 .case-play.phase-questions:not(.is-reply):not(.is-bridge) .visual-choices { margin-top: 4cqh; }
-.case-play.phase-questions:not(.is-reply):not(.is-bridge) .tap-legend { margin-top: 14px; }
+.case-play.phase-questions:not(.is-reply):not(.is-bridge) .tap-legend {
+  margin-top: auto; padding-top: 2cqh; position: relative; z-index: 2;
+}
 .case-play .choice { display: flex; align-items: center; gap: 12px; text-align: left; }
 .choice-face { width: 72px; height: 72px; object-fit: contain; flex: 0 0 auto; }
 .case-play .action-card img { width: 100%; height: auto; max-height: 22cqh; object-fit: contain; background: transparent; filter: drop-shadow(0 12px 10px rgba(20, 12, 28, 0.28)); }
@@ -1219,8 +1221,10 @@ body.reduce .guide-play .robot-guide { transition: none; }
 .mission-3.phase-choices .m3-frame video.is-on { opacity: 1; }
 .m3-hit { position: absolute; inset: 0; border: 0; background: transparent; padding: 0; }
 body.reduce .mission-3 .choice { transition: none; }
-.mission-3.phase-choices .m3-card small {
-  background: rgba(255, 250, 243, 0.92); border-radius: 8px; padding: 2px 6px;
+.mission-3.phase-choices .m3-card span {
+  font-size: 1.15rem; font-weight: 900; color: #2b2155;
+  background: #fffaf3; border-radius: 12px; padding: 6px 12px;
+  box-shadow: 0 3px 0 rgba(43, 33, 85, 0.12);
 }
 body.reduce .m3-card, body.reduce .m3-slot { transition: none; }
 @media (max-width: 800px) {
